@@ -3,6 +3,7 @@ package com.fdse.scontroller;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -33,7 +34,9 @@ import android.widget.TextView;
 import com.fdse.scontroller.web.WebService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -52,7 +55,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * TODO: remove after connecting to a real authentication system.
      */
     private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "zhangsan@zs:zhangsan", "lisi44@ls:lisi44"
+            "zhangsan@zs:zhangsan", "fdse:fdse"
     };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -156,7 +159,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
+        String name = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
@@ -170,11 +173,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
+        if (TextUtils.isEmpty(name)) {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
+        } else if (!isEmailValid(name)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
@@ -188,19 +191,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask = new UserLoginTask(name, password);
             mAuthTask.execute((Void) null);
         }
     }
 
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
-        return email.contains("@");
+        return email.length() > 3;
     }
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() > 3;
     }
 
     /**
@@ -299,11 +302,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String mEmail;
+        private final String mName;
         private final String mPassword;
 
-        UserLoginTask(String email, String password) {
-            mEmail = email;
+        UserLoginTask(String name, String password) {
+            mName = name;
             mPassword = password;
         }
 
@@ -318,18 +321,30 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return false;
             }
 
-            for (String credential : DUMMY_CREDENTIALS) {
+            /*for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
+                if (pieces[0].equals(mName)) {
                     // Account exists, return true if the password matches.
+                    //Context context = getApplicationContext();
+                    //TokenMessage.getInstance().saveUserToken(context,mName + mPassword);
                     return pieces[1].equals(mPassword);
                 }
+            }*/
+            String param = "param=" + mName + ":" + mPassword;
+            System.out.println(param);
+            String token = WebService.login(param,"login");
+            System.out.println("token:" + token);
+            if(token != null){
+                Context context = getApplicationContext();
+                TokenMessage.getInstance().saveUserToken(context,token);
+                return true;
+            }else {
+                return false;
             }
            /* String message = WebService.executeHttpGet(mEmail,mPassword);
             if(message == null){
                 return false;
             }*/
-            return true;
         }
 
         @Override

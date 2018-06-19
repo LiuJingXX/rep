@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class TokenMessage {
-    private String token = null;
     private static TokenMessage instance;
 
     public static TokenMessage getInstance() {
@@ -12,10 +11,6 @@ public class TokenMessage {
             instance = new TokenMessage();
         }
         return instance;
-    }
-
-    public String getToken() {
-        return token;
     }
 
     public void saveUserToken(Context context, String token) {
@@ -35,7 +30,4 @@ public class TokenMessage {
         editor.apply();
     }
 
-    public void setToken(String token) {
-        this.token = token;
-    }
 }
