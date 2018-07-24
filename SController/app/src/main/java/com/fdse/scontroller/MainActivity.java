@@ -44,20 +44,20 @@ public class MainActivity extends AppCompatActivity {
                         transaction.show(homeFragment);
                     }
                     break;
-                case R.id.navigation_dashboard:
-                    if(personFragment==null){
-                        personFragment = new PersonFragment();
-                        transaction.add(R.id.main_fragment_container,personFragment);
-                    }else{
-                        transaction.show(personFragment);
-                    }
-                    break;
-                case R.id.navigation_notifications:
+                case R.id.navigation_tasks:
                     if(taskFragment==null){
                         taskFragment = new TaskFragment();
                         transaction.add(R.id.main_fragment_container,taskFragment);
                     }else{
                         transaction.show(taskFragment);
+                    }
+                    break;
+                case R.id.navigation_settings:
+                    if(personFragment==null){
+                        personFragment = new PersonFragment();
+                        transaction.add(R.id.main_fragment_container,personFragment);
+                    }else{
+                        transaction.show(personFragment);
                     }
                     break;
             }
