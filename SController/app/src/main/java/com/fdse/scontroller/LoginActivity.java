@@ -339,7 +339,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 TokenMessage.getInstance().saveUserToken(context,token);
                 return true;
             }else {
-                return false;
+                /// TODO: 2018/7/24  暂时设置为true方便调试
+                return true;
             }
            /* String message = WebService.executeHttpGet(mEmail,mPassword);
             if(message == null){
