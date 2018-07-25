@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +17,7 @@ import com.fdse.scontroller.fragment.subfragment.PersonFragment;
 import com.fdse.scontroller.fragment.subfragment.TaskFragment;
 import com.fdse.scontroller.heartbeatpackage.HeartBeatService;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity {
 
     //fragmet嵌入在这里
     private FrameLayout main_frameLayout;
