@@ -46,10 +46,20 @@
         android:layout_marginTop="20dp"
         android:orientation="vertical">
 
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_home_device"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_margin="5dp">
+
         <ListView
             android:id="@+id/list_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></ListView>
+            android:layout_height="match_parent"
+            android:background="@drawable/corners_bg">
+        </ListView>
+
+</android.support.v4.widget.SwipeRefreshLayout>
 
     </LinearLayout>
 

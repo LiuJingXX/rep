@@ -23,14 +23,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="智能设备"
-            android:textSize="30sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/tv_home_device_sate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="设别状态"
-            android:textSize="25sp" />
+            android:textSize="15sp" />
     </LinearLayout>
 
 
