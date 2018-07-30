@@ -30,7 +30,7 @@
             android:src="@drawable/ic_navigate_next_black_24dp" />
 
         <ImageView
-            android:id="@+id/ic_add_black"
+            android:id="@+id/ic_home_add_device"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -40,27 +40,12 @@
     </RelativeLayout>
 
 
-    <LinearLayout
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_home_device"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:orientation="vertical">
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_home_device"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:layout_margin="5dp">
-
-        <ListView
-            android:id="@+id/list_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/corners_bg">
-        </ListView>
-
-</android.support.v4.widget.SwipeRefreshLayout>
-
-    </LinearLayout>
+        android:layout_margin="5dp"
+        android:background="@drawable/corners_bg"/>
 
 </LinearLayout>

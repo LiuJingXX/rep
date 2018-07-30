@@ -1,31 +1,36 @@
 package com.fdse.scontroller.fragment.subfragment;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fdse.scontroller.R;
-import com.fdse.scontroller.adapter.HomeDeviceAdapter;
-import com.fdse.scontroller.customview.HomeDevice;
+import com.fdse.scontroller.adapter.HomeDeviceViewPagerAdapter;
+import com.fdse.scontroller.fragment.devicefragment.DeviceListFragment;
+import com.fdse.scontroller.fragment.devicefragment.DeviceWebFragment;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class HomeFragment extends Fragment {
-    private ListView listView;
-    private SwipeRefreshLayout swipeRefreshView;
-    private List<HomeDevice> homeDeviceList = new ArrayList<HomeDevice>();
-    private HomeDeviceAdapter homeDeviceAdapter;
+
+    private TextView sub_home_textview1;
+    private ImageView ic_home_add_device;
+    private List<Fragment>  viewPageList;
+    private ViewPager viewPager;
+
+
 
     public static HomeFragment newInstance(String s) {
         HomeFragment homeFragment = new HomeFragment();
@@ -37,64 +42,81 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sub_home, container, false);
 
-        //获取（初始化设备数据）
-        initHomeDevice();
-        homeDeviceAdapter = new HomeDeviceAdapter(getActivity(),
-                R.layout.item_home_deivce, homeDeviceList);
-        listView = (ListView) view.findViewById(R.id.list_view);
-        listView.setAdapter(homeDeviceAdapter);
+        //切换家庭菜单框
+        sub_home_textview1 = (TextView)view.findViewById(R.id.sub_home_textview1);
+        //新增设备按钮
+        ic_home_add_device=(ImageView)view.findViewById(R.id.ic_home_add_device);
 
-        swipeRefreshView = (SwipeRefreshLayout) view.findViewById(R.id.swipe_home_device);
-        // 设置颜色属性的时候一定要注意是引用了资源文件还是直接设置16进制的颜色，因为都是int值容易搞混
-        // 设置下拉进度的背景颜色，默认就是白色的
-        swipeRefreshView.setProgressBackgroundColorSchemeResource(android.R.color.white);
-        // 设置下拉进度的主题颜色
-        swipeRefreshView.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimary, R.color.yellow);
-
-        // 下拉时触发SwipeRefreshLayout的下拉动画，动画完毕之后就会回调这个方法
-        swipeRefreshView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-
-                // 开始刷新，设置当前为刷新状态
-                //swipeRefreshLayout.setRefreshing(true);
-
-                // 这里是主线程
-                // 一些比较耗时的操作，比如联网获取数据，需要放到子线程去执行
-                // TODO 获取数据
-                final Random random = new Random();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        HomeDevice homeDevice1 =new HomeDevice(R.drawable.home_xiaomidfb,"小米电饭煲","暂停运行");
-                        homeDeviceList.add(homeDevice1);
-                        homeDeviceAdapter.notifyDataSetChanged();
-
-                        Toast.makeText(getActivity(), "刷新了一条数据", Toast.LENGTH_SHORT).show();
-
-                        // 加载完数据设置为不刷新状态，将下拉进度收起来
-                        swipeRefreshView.setRefreshing(false);
-                    }
-                }, 1200);
-
-                // System.out.println(Thread.currentThread().getName());
-
-                // 这个不能写在外边，不然会直接收起来
-                //swipeRefreshLayout.setRefreshing(false);
-            }
-        });
+        //获取viewPager
+        viewPager = (ViewPager)view.findViewById(R.id.vp_home_device);
 
         return view;
     }
 
-    private void initHomeDevice(){
-        HomeDevice homeDevice1 =new HomeDevice(R.drawable.home_saodijiqiren,"扫地机器人","正在运行");
-        homeDeviceList.add(homeDevice1);
-        HomeDevice homeDevice2 =new HomeDevice(R.drawable.home_saodijiqiren,"扫地机器人","正在运行");
-        homeDeviceList.add(homeDevice2);
-        HomeDevice homeDevice3 =new HomeDevice(R.drawable.home_saodijiqiren,"扫地机器人","正在运行");
-        homeDeviceList.add(homeDevice3);
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        // TODO Auto-generated method stub
+        super.onActivityCreated(savedInstanceState);
 
+        //初始化viewPager//加载viewpage ,这次加载的有设备list的DeviceListFragment和设备web图的DeviceWebFragment
+        //获取两个fragment
+        DeviceListFragment fragment1 = new DeviceListFragment();
+        DeviceWebFragment fragment2 = new DeviceWebFragment();
+        // 将要分页显示的View装入数组中
+        viewPageList= new ArrayList<Fragment>();
+        viewPageList.add(fragment1);
+        viewPageList.add(fragment2);
+        //实例化适配器
+        viewPager.setAdapter(new HomeDeviceViewPagerAdapter(getActivity().getSupportFragmentManager(), viewPageList));
+//        viewPager.addOnPageChangeListener(this);//设置页面切换时的监听器(可选，用了之后要重写它的回调方法处理页面切换时候的事务)
+
+        //设置点击切换家庭，弹出选择家庭菜单框
+        sub_home_textview1.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                //创建弹出式菜单对象（最低版本11）
+                PopupMenu popup = new PopupMenu(getActivity(), v);//第二个参数是绑定的那个view
+                //获取菜单填充器
+                MenuInflater inflater = popup.getMenuInflater();
+                //填充菜单
+                inflater.inflate(R.menu.home, popup.getMenu());
+                //绑定菜单项的点击事件
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.exit:
+                                Toast.makeText(getActivity(), "切换为实验室设备",Toast.LENGTH_LONG).show();
+                                break;
+                            case R.id.set:
+                                Toast.makeText(getActivity(), "切换为401设备",Toast.LENGTH_LONG).show();
+                                break;
+                            case R.id.account:
+                                Toast.makeText(getActivity(), "管理家庭",Toast.LENGTH_LONG).show();
+                                break;
+                            default:
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                //显示(这一行代码不要忘记了)
+                popup.show();
+            }
+        });
+
+        //为房间添加新设备
+        ic_home_add_device.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "新增设备",Toast.LENGTH_LONG).show();
+            }
+        });
 
     }
+
+
 }

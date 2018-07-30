@@ -8,6 +8,7 @@
         android:id="@+id/iv_home_device"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:layout_marginLeft="10dp"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@id/sub_home_textview1"
         android:src="@drawable/home_saodijiqiren" />
