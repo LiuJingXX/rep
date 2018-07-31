@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+
     android:orientation="vertical">
-    <TextView
-        android:id="@+id/sub_home_textview"
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_tasks_publish"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:text="Task"/>
-    <TextView
-        android:id="@+id/sub_home_textview2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:text="Task"/>
-    <TextView
-        android:id="@+id/sub_home_textview3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:text="Task"/>
+        android:layout_height="match_parent"
+        android:layout_margin="5dp">
+
+        <ListView
+            android:id="@+id/lv_tasks_publish"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></ListView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>
