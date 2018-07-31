@@ -26,18 +26,25 @@ import com.fdse.scontroller.R;
 public class DeviceWebFragment extends Fragment {
 
     private WebView webView;
-    private String mstrLoginUrl = "http://baidu.com";
+    private String mstrLoginUrl = "http://115.28.9.104/xiaoyi/dashboard/index.jsp";
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_device_web, container, false);
 
-        webView = (WebView)view.findViewById(R.id.wv_home_device);
+        webView = (WebView) view.findViewById(R.id.wv_home_device);
 
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadUrl("http://www.baidu.com");
-        webView.setWebViewClient(new WebViewClient(){
+        //支持屏幕缩放
+        webView.getSettings().setSupportZoom(true);
+        webView.getSettings().setBuiltInZoomControls(true);
+        //不显示webview缩放按钮
+        webView.getSettings().setDisplayZoomControls(false);
+
+
+        webView.loadUrl(mstrLoginUrl);
+        webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);

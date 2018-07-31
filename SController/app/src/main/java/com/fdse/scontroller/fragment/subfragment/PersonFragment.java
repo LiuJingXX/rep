@@ -15,7 +15,7 @@ import com.fdse.scontroller.R;
 public class PersonFragment extends android.support.v4.app.Fragment {
 
     private WebView webView;
-    private String mstrLoginUrl = "http://baidu.com";
+    private String mstrLoginUrl = "http://115.28.9.104/xiaoyi/dashboard/index.jsp";
 
     @Nullable
     @Override
@@ -25,7 +25,13 @@ public class PersonFragment extends android.support.v4.app.Fragment {
         webView = (WebView)view.findViewById(R.id.wv_home_device1);
 
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadUrl("http://www.baidu.com");
+        //支持屏幕缩放
+        webView.getSettings().setSupportZoom(true);
+        webView.getSettings().setBuiltInZoomControls(true);
+        //不显示webview缩放按钮
+        webView.getSettings().setDisplayZoomControls(false);
+        webView.setInitialScale(100);//为25%，最小缩放等级
+        webView.loadUrl(mstrLoginUrl);
         webView.setWebViewClient(new WebViewClient(){
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
