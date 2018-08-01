@@ -21,6 +21,7 @@ import com.fdse.scontroller.R;
 import com.fdse.scontroller.TasksWorkflowActivity;
 import com.fdse.scontroller.adapter.HomeDeviceAdapter;
 import com.fdse.scontroller.customview.HomeDevice;
+import com.melnykov.fab.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,6 +48,9 @@ public class TaskFragment extends android.support.v4.app.Fragment {
         //设置下拉刷新
         setSwipeRefresh(view);
 
+        //设置voice附着在ListView，跟随ListView滚动滑入滑出
+        attachToListView();
+
         return view;
     }
 
@@ -63,8 +67,8 @@ public class TaskFragment extends android.support.v4.app.Fragment {
 
     //添加bean类数据临时的先添加，再连数据库
     private void initData() {
-        listViewData = new String[10];
-        for (int i = 0; i < 10; i++) {
+        listViewData = new String[20];
+        for (int i = 0; i < listViewData.length; i++) {
             Date day=new Date();
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String time=df.format(day);
@@ -134,7 +138,12 @@ public class TaskFragment extends android.support.v4.app.Fragment {
                 //swipeRefreshLayout.setRefreshing(false);
             }
         });
+    }
 
+    private void attachToListView(){
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab_voice);
+        fab.attachToListView(listView);
+        fab.setType(FloatingActionButton.TYPE_MINI);
     }
 
 }
