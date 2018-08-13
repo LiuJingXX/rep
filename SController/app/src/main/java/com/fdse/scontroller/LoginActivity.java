@@ -22,6 +22,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,13 +32,22 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.fdse.scontroller.constant.UrlConstant;
+import com.fdse.scontroller.http.HttpUtil;
+import com.fdse.scontroller.servlet.LoginServlet;
+import com.fdse.scontroller.util.RSAUtils;
 import com.fdse.scontroller.web.WebService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -68,6 +78,7 @@ public class LoginActivity extends FragmentActivity implements LoaderCallbacks<C
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private String email , password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,17 +162,17 @@ public class LoginActivity extends FragmentActivity implements LoaderCallbacks<C
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
+//        if (mAuthTask != null) {
+//            return;
+//        }
 
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String name = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        email = mEmailView.getText().toString();
+         password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -174,11 +185,11 @@ public class LoginActivity extends FragmentActivity implements LoaderCallbacks<C
         }
 
         // Check for a valid email address.
-        if (TextUtils.isEmpty(name)) {
+        if (TextUtils.isEmpty(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(name)) {
+        } else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
@@ -192,8 +203,10 @@ public class LoginActivity extends FragmentActivity implements LoaderCallbacks<C
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(name, password);
-            mAuthTask.execute((Void) null);
+            //更换成我自己的登录逻辑
+//            mAuthTask = new UserLoginTask(name, password);
+//            mAuthTask.execute((Void) null);
+            login();
         }
     }
 
@@ -241,6 +254,97 @@ public class LoginActivity extends FragmentActivity implements LoaderCallbacks<C
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
+    }
+
+    private void login() {
+
+        /*发送post登录请求*/
+        final HashMap<String, String> postData = new HashMap<String, String>();
+
+        try{
+            //数据加密
+            final String encryptedEmail = RSAUtils.encryptByPublicKey(email);
+            final String encryptedPassword = RSAUtils.encryptByPublicKey(password);
+
+            postData.put("encryptedEmail", encryptedEmail);
+            postData.put("encryptedPassword", encryptedPassword);
+
+            String serviceURL = UrlConstant.getAppBackEndServiceURL(UrlConstant.APP_BACK_END_USER_LOGIN_SERVICE);
+            HttpUtil.doPost(serviceURL, postData, new okhttp3.Callback() {
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    try {
+                        String result=response.body().string();
+                        if ("1".equals(result)) {
+                            Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            mPasswordView.setError(getString(R.string.error_incorrect_password));
+                            mPasswordView.requestFocus();
+                        }
+//                        ServletResponseData responseData = JSONUtils.toBean(response.body().string(), ServletResponseData.class);
+//                        //判断是否登录成功，如果成功将返回的userId存入application
+//                        int result = responseData.getResult();
+//                        if (result == 1) {
+//                            LoginServlet.ResponseBO responseBO = JSONUtils.toBean(responseData.getData(), LoginServlet.ResponseBO.class);
+//                            editor.putString("username",userName);
+//                            editor.putString("password",password);
+//                            editor.commit();
+//
+//                            app.setUserId(responseBO.getUserId());
+//                            app.setUserName(userName);
+//                            app.setCreditPublish(responseBO.getCreditPublish());
+//                            app.setCreditWithdraw(responseBO.getCreditWithdraw());
+//
+//                            Intent i = new Intent(Login.this, EntryActivity.class);
+//                            startActivity(i);
+//                            finish();
+//                        } else {
+//                            showLoginFailed(result);
+//                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        showLoginFailed(-4);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    e.printStackTrace();
+                    showLoginFailed(-5);
+                }
+
+            });
+        }
+        catch(Exception e){
+
+        }
+    }
+
+    //show the login failed message
+    private void showLoginFailed(final int result) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // 在这里进行UI操作，将结果显示到界面上
+//                progressDialog.dismiss();//回到登录界面
+                if (result == -1) { //用户名不存在
+                    mEmailView.setError(LoginActivity.this.getString(R.string.user_name_not_exist));
+                    mEmailView.requestFocus();
+                } else if (result == -2) { //密码错误
+                    mPasswordView.setError(LoginActivity.this.getString(R.string.wrong_password));
+                    mPasswordView.requestFocus();
+                } else if (result == -3) {
+                    Toast.makeText(LoginActivity.this,
+                            LoginActivity.this.getString(R.string.internal_server_error), Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(LoginActivity.this,
+                            String.valueOf(result), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override
