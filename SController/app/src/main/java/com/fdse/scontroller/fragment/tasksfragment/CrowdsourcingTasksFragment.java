@@ -16,14 +16,10 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.fdse.scontroller.R;
-import com.fdse.scontroller.TasksWorkflowActivity;
-import com.fdse.scontroller.adapter.HomeDeviceAdapter;
-import com.fdse.scontroller.customview.HomeDevice;
+import com.fdse.scontroller.activity.tasks.TasksWorkflowActivity;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Random;
 
 /**

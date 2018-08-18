@@ -42,6 +42,7 @@ import com.fdse.scontroller.constant.UrlConstant;
 import com.fdse.scontroller.constant.UserConstant;
 import com.fdse.scontroller.http.HttpUtil;
 import com.fdse.scontroller.servlet.LoginServlet;
+import com.fdse.scontroller.util.Global;
 import com.fdse.scontroller.util.RSAUtils;
 import com.fdse.scontroller.web.WebService;
 
@@ -54,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 
 import okhttp3.Call;
+import okhttp3.Headers;
 import okhttp3.Response;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -92,6 +94,7 @@ public class LoginActivity extends FragmentActivity {
     SharedPreferences.Editor editor;
 
     private String email , password;
+
 
 
     @Override
@@ -278,6 +281,10 @@ public class LoginActivity extends FragmentActivity {
         final HashMap<String, String> postData = new HashMap<String, String>();
 
         try{
+            //todo 暂时就这么做
+//            Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+//            startActivity(intent);
+
             //数据加密
             final String encryptedEmail = RSAUtils.encryptByPublicKey(email);
             final String encryptedPassword = RSAUtils.encryptByPublicKey(password);
@@ -291,12 +298,23 @@ public class LoginActivity extends FragmentActivity {
                 public void onResponse(Call call, Response response) throws IOException {
                     try {
 
+                        //获取session的操作，session放在cookie头，且取出后含有“；”，取出后为下面的 s （也就是jsesseionid）
+                        Headers headers = response.headers();
+                        List<String> cookies = headers.values("Set-Cookie");
+                        if(cookies.size()>0){
+                            String session = cookies.get(0);
+                            Global.sessionId= session.substring(0, session.indexOf(";"));
+                        }
+
                         String responceData=response.body().string();
                         JSONObject jsonObject = new JSONObject(responceData);
                         int result= (int) jsonObject.get("result");
+                        JSONObject userInfo= (JSONObject) jsonObject.get("userInfo");
                         if (result==UserConstant.RESULT_SUCCESS) {
-                            editor.putString("email",email);
-                            editor.putString("password",password);
+                            editor.putInt("userId", (Integer) userInfo.get("id"));
+                            editor.putString("email", (String) userInfo.get("email"));
+                            editor.putString("password",(String) userInfo.get("password"));
+                            editor.putString("userName",(String) userInfo.get("userName"));
                             editor.commit();
                             Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                             startActivity(intent);
@@ -330,14 +348,14 @@ public class LoginActivity extends FragmentActivity {
 //                        }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        showLoginFailed(-4);
+                        showLoginFailed(UserConstant.RESULT_SERVER_ERROR);
                     }
                 }
 
                 @Override
                 public void onFailure(Call call, IOException e) {
                     e.printStackTrace();
-                    showLoginFailed(-5);
+                    showLoginFailed(UserConstant.RESULT_SERVER_ERROR);
                 }
 
             });

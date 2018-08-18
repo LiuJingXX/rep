@@ -1,6 +1,8 @@
 package com.fdse.scontroller.fragment.tasksfragment;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -16,12 +18,22 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.fdse.scontroller.R;
-import com.fdse.scontroller.TasksWorkflowActivity;
+import com.fdse.scontroller.activity.tasks.TasksWorkflowActivity;
+import com.fdse.scontroller.activity.tasks.TasksWorkflowD3Activity;
+import com.fdse.scontroller.constant.Constant;
+import com.fdse.scontroller.constant.UrlConstant;
+import com.fdse.scontroller.http.HttpUtil;
 import com.melnykov.fab.FloatingActionButton;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Random;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 /**
  * <pre>
@@ -37,13 +49,16 @@ public class MyTasksFragment extends Fragment {
     private View view;
     private ListView listView;
     private SwipeRefreshLayout swipeRefreshView;
+    private FloatingActionButton floatingActionButton;
     private String[] listViewData;
     private ArrayAdapter<String> adapter;
+    SharedPreferences preferences;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_tasks_mine, container, false);
+        preferences = getActivity().getSharedPreferences(Constant.PREFERENCES_USER_INFO, Activity.MODE_PRIVATE);
         //获取发布的任务
         initView();
         initData();
@@ -51,8 +66,9 @@ public class MyTasksFragment extends Fragment {
         //设置下拉刷新
         setSwipeRefresh(view);
 
-        //设置voice附着在ListView，跟随ListView滚动滑入滑出
-        attachToListView();
+        //设置voice附着在ListView，跟随ListView滚动滑入滑出,并设置其点击事件
+        setfloatingActionButton();
+
         return view;
     }
 
@@ -71,20 +87,20 @@ public class MyTasksFragment extends Fragment {
     private void initData() {
         listViewData = new String[20];
         for (int i = 0; i < listViewData.length; i++) {
-            Date day=new Date();
+            Date day = new Date();
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String time=df.format(day);
-            String sTask = "任务"+i+"             "+time;
-            listViewData[i]=sTask;
+            String time = df.format(day);
+            String sTask = "任务" + i + "             " + time;
+            listViewData[i] = sTask;
             //item的点击事件，里面可以设置跳转并传值
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     Toast.makeText(getActivity(), "第" + i + "行", Toast.LENGTH_LONG).show();
                     //开始传值
-                    Intent intent=new Intent(getActivity(), TasksWorkflowActivity.class);
-                    Bundle bundle=new Bundle();
-                    bundle.putSerializable("key",i);
+                    Intent intent = new Intent(getActivity(), TasksWorkflowD3Activity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("key", i);
                     intent.putExtras(bundle);
                     //利用上下文开启跳转
                     startActivity(intent);
@@ -99,7 +115,7 @@ public class MyTasksFragment extends Fragment {
         listView.setAdapter(adapter);
     }
 
-    private void setSwipeRefresh(View view){
+    private void setSwipeRefresh(View view) {
 
         swipeRefreshView = (SwipeRefreshLayout) view.findViewById(R.id.swipe_tasks_publish);
         // 设置颜色属性的时候一定要注意是引用了资源文件还是直接设置16进制的颜色，因为都是int值容易搞混
@@ -142,9 +158,68 @@ public class MyTasksFragment extends Fragment {
         });
     }
 
-    private void attachToListView(){
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab_voice);
-        fab.attachToListView(listView);
-        fab.setType(FloatingActionButton.TYPE_MINI);
+    private void setfloatingActionButton() {
+        //随着listview显示隐藏
+        floatingActionButton = (FloatingActionButton) view.findViewById(R.id.fab_voice);
+        floatingActionButton.attachToListView(listView);
+        floatingActionButton.setType(FloatingActionButton.TYPE_MINI);
+        //设置其点击事件
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //向本体库发送任务id,请求owls
+                getOwls();
+            }
+        });
+
     }
+
+    /**
+     * 向本体库发送任务id,请求owls
+     */
+    private void getOwls() {
+        //发送post数据
+        final HashMap<String, String> postData = new HashMap<String, String>();
+        postData.put("serviceId", "1234");
+
+//        String serviceURL = UrlConstant.getOntologyServiceURL(UrlConstant.ONTOLOGY_GET_OWLS);
+        String serviceURL = UrlConstant.getAppBackEndServiceURL(UrlConstant.APP_BACK_END_USER_TEST);
+        HttpUtil.doPost(serviceURL, postData, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String sOwlsJson = response.body().string();
+                //向流程引擎发送owls+用户id,返回BPMN，把BPNM解析成List<Node>,Node存储流程节点信息（节点位置，节点名称）
+                getBPMN(sOwlsJson);
+            }
+        });
+    }
+
+    //向流程引擎发送owls+用户id,返回BPMN，把BPNM解析成List<Node>,Node存储流程节点信息（节点位置，节点名称）
+    private void getBPMN(String sOwlsJson) {
+        //发送post数据
+        final HashMap<String, String> postData = new HashMap<String, String>();
+        postData.put("sOwlsJson", sOwlsJson);
+        postData.put("userId", String.valueOf(preferences.getInt("userId",0)));
+
+        String serviceURL = UrlConstant.getActivitiServiceURL(UrlConstant.ACTIVITI_GET_BPMN);
+        HttpUtil.doPost(serviceURL, postData, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                //todo,思考，是不是不用bpmn而使用owls 或者其他渠道去获取我要的信息。
+                String sBPMN = response.body().string();
+
+            }
+        });
+    }
+
 }

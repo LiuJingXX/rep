@@ -1,5 +1,7 @@
 package com.fdse.scontroller.http;
 
+import com.fdse.scontroller.util.Global;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,6 +48,7 @@ public class HttpUtil {
         RequestBody body = formBody.build();
         //发送请求
         Request request = new Request.Builder()
+                .addHeader("cookie", Global.sessionId)
                 .url(serviceURL)
                 .post(body)
                 .build();

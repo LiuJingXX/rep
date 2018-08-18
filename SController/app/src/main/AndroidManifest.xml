@@ -18,10 +18,10 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" />
-        <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login" />
-        <activity android:name=".StartActivity">
+        <!--<activity-->
+            <!--android:name=".LoginActivity"-->
+            <!--android:label="@string/title_activity_login" />-->
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,7 +43,11 @@
         </service>
 
         <activity
-            android:name=".TasksWorkflowActivity"
+            android:name=".activity.tasks.TasksWorkflowActivity"
+            android:label="@string/title_activity_tasks_workflow"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".activity.tasks.TasksWorkflowD3Activity"
             android:label="@string/title_activity_tasks_workflow"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
