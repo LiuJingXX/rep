@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import com.fdse.scontroller.R;
 import com.fdse.scontroller.adapter.HomeDeviceAdapter;
-import com.fdse.scontroller.customview.HomeDevice;
+import com.fdse.scontroller.model.HomeDevice;
 
 import java.util.ArrayList;
 import java.util.List;

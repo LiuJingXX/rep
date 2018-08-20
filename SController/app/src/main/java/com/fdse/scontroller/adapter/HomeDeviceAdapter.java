@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.fdse.scontroller.R;
-import com.fdse.scontroller.customview.HomeDevice;
+import com.fdse.scontroller.model.HomeDevice;
 
 import java.util.List;
 

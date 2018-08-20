@@ -14,21 +14,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.fdse.scontroller.R;
 import com.fdse.scontroller.activity.tasks.TasksWorkflowActivity;
 import com.fdse.scontroller.activity.tasks.TasksWorkflowD3Activity;
+import com.fdse.scontroller.adapter.TaskMineAdapter;
 import com.fdse.scontroller.constant.Constant;
 import com.fdse.scontroller.constant.UrlConstant;
 import com.fdse.scontroller.http.HttpUtil;
+import com.fdse.scontroller.model.Task;
 import com.melnykov.fab.FloatingActionButton;
+
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import okhttp3.Call;
@@ -51,6 +59,7 @@ public class MyTasksFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshView;
     private FloatingActionButton floatingActionButton;
     private String[] listViewData;
+    BaseAdapter baseAdapter;
     private ArrayAdapter<String> adapter;
     SharedPreferences preferences;
 
@@ -61,13 +70,16 @@ public class MyTasksFragment extends Fragment {
         preferences = getActivity().getSharedPreferences(Constant.PREFERENCES_USER_INFO, Activity.MODE_PRIVATE);
         //获取发布的任务
         initView();
-        initData();
-        initAdapter();
+        showOngoingTasks();
+//        initData();
+//        initAdapter();
         //设置下拉刷新
         setSwipeRefresh(view);
 
         //设置voice附着在ListView，跟随ListView滚动滑入滑出,并设置其点击事件
         setfloatingActionButton();
+
+
 
         return view;
     }
@@ -142,7 +154,7 @@ public class MyTasksFragment extends Fragment {
 //                        HomeDevice homeDevice1 =new HomeDevice(R.drawable.home_xiaomidfb,"小米电饭煲","暂停运行");
 //                        homeDeviceList.add(homeDevice1);
 //                        homeDeviceAdapter.notifyDataSetChanged();
-
+                        showOngoingTasks();
                         Toast.makeText(getActivity(), "刷新成功", Toast.LENGTH_SHORT).show();
 
                         // 加载完数据设置为不刷新状态，将下拉进度收起来
@@ -183,7 +195,7 @@ public class MyTasksFragment extends Fragment {
         postData.put("serviceId", "1234");
 
 //        String serviceURL = UrlConstant.getOntologyServiceURL(UrlConstant.ONTOLOGY_GET_OWLS);
-        String serviceURL = UrlConstant.getAppBackEndServiceURL(UrlConstant.APP_BACK_END_USER_TEST);
+        String serviceURL = UrlConstant.getAppBackEndServiceURL(UrlConstant.APP_BACK_END_TASKS_GET_OWLS);
         HttpUtil.doPost(serviceURL, postData, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -204,9 +216,9 @@ public class MyTasksFragment extends Fragment {
         //发送post数据
         final HashMap<String, String> postData = new HashMap<String, String>();
         postData.put("sOwlsJson", sOwlsJson);
-        postData.put("userId", String.valueOf(preferences.getInt("userId",0)));
+        postData.put("userId", String.valueOf(preferences.getInt("userId", 0)));
 
-        String serviceURL = UrlConstant.getActivitiServiceURL(UrlConstant.ACTIVITI_GET_BPMN);
+        String serviceURL = UrlConstant.getAppBackEndServiceURL(UrlConstant.APP_BACK_END_TASKS_GET_BPMN);
         HttpUtil.doPost(serviceURL, postData, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -217,7 +229,59 @@ public class MyTasksFragment extends Fragment {
             public void onResponse(Call call, Response response) throws IOException {
                 //todo,思考，是不是不用bpmn而使用owls 或者其他渠道去获取我要的信息。
                 String sBPMN = response.body().string();
+                saveTaskInfo(sBPMN);
+            }
+        });
+    }
 
+    //保存任务信息
+    private void saveTaskInfo(String workflowInfo) {
+        //发送post数据
+        final HashMap<String, String> postData = new HashMap<String, String>();
+        postData.put("taskName", "我要喝水");
+        postData.put("workflowInfo", workflowInfo);
+
+        String serviceURL = UrlConstant.getAppBackEndServiceURL(UrlConstant.APP_BACK_END_TASKS_SAVE_TASK);
+        HttpUtil.doPost(serviceURL, postData, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                //刷新任务列表
+                showOngoingTasks();
+            }
+        });
+    }
+
+    //获取任务列表信息（根据用户id 获取所有任务信息：任务表，和运行完成度）
+    private void showOngoingTasks() {
+
+        String serviceURL = UrlConstant.getAppBackEndServiceURL(UrlConstant.APP_BACK_END_TASKS_GET_ONGOING_TASKS);
+        HttpUtil.sendOkHttpRequestByGet(serviceURL, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                //将所有任务信息显示在界面上。去看看众包平台是怎么写这类事件的，学习一下。
+                String responceData = response.body().string();
+                List<Task> list =JSONObject.parseArray(responceData, Task.class);
+                baseAdapter = new TaskMineAdapter(getActivity(), list);
+                showList();
+            }
+        });
+    }
+
+    private void showList() {
+        ((Activity) getContext()).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                listView.setAdapter(baseAdapter);
             }
         });
     }

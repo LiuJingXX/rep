@@ -20,7 +20,20 @@ public class UrlConstant {
 
     //用户登录
     public static final String APP_BACK_END_USER_LOGIN_SERVICE = "user/login";
+
     public static final String APP_BACK_END_USER_TEST = "user/test";
+
+    //测试用--获取owls
+    public static final String APP_BACK_END_TASKS_GET_OWLS= "task/getOwls";
+
+    //测试用--获取bpmn
+    public static final String APP_BACK_END_TASKS_GET_BPMN= "task/getBPMN";
+
+    //保存任务
+    public static final String APP_BACK_END_TASKS_SAVE_TASK= "task/saveTask";
+
+    //获取所有任务列表
+    public static final String APP_BACK_END_TASKS_GET_ONGOING_TASKS= "task/getOngoingTasks";
 
     public static String getAppBackEndServiceURL(String  service) {
         String serviceURL = String.format("http://%s:%s/%s", APP_BACK_END_IP, APP_BACK_END_PORT, service);

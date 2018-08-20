@@ -1,4 +1,4 @@
-package com.fdse.scontroller.customview;
+package com.fdse.scontroller.model;
 
 /**
  * <pre>

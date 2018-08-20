@@ -32,6 +32,7 @@ public class HttpUtil {
     public static void sendOkHttpRequestByGet(String serviceURL,okhttp3.Callback callback){
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
+                .addHeader("cookie", Global.sessionId)
                 .url(serviceURL)
                 .build();
         client.newCall(request).enqueue(callback);
