@@ -1,36 +1,18 @@
 package com.fdse.scontroller;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
 
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
-
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -41,24 +23,23 @@ import com.fdse.scontroller.constant.Constant;
 import com.fdse.scontroller.constant.UrlConstant;
 import com.fdse.scontroller.constant.UserConstant;
 import com.fdse.scontroller.http.HttpUtil;
-import com.fdse.scontroller.servlet.LoginServlet;
+import com.fdse.scontroller.service.MQTTMessage;
+import com.fdse.scontroller.service.MQTTService;
 import com.fdse.scontroller.util.Global;
 import com.fdse.scontroller.util.RSAUtils;
-import com.fdse.scontroller.web.WebService;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Headers;
 import okhttp3.Response;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
@@ -148,6 +129,19 @@ public class LoginActivity extends FragmentActivity {
             login();
         }
     }
+
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        //调用mqtt
+//        EventBus.getDefault().register(this);
+//    }
+//
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void getMqttMessage3(MQTTMessage mqttMessage){
+//        Log.i(MQTTService.TAG,"Login结束收到消息:"+mqttMessage.getMessage());
+//        Toast.makeText(this,"Login结束收到消息:"+mqttMessage.getMessage(), Toast.LENGTH_SHORT).show();
+//    }
 
 //    private void populateAutoComplete() {
 //        if (!mayRequestContacts()) {
