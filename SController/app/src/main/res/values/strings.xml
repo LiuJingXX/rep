@@ -20,5 +20,5 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="title_activity_tasks_workflow">TasksWorkflowActivity</string>
+    <string name="title_activity_tasks_workflow">流程信息</string>
 </resources>

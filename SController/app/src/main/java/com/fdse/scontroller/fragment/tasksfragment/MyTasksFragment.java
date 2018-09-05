@@ -18,14 +18,13 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fdse.scontroller.R;
-import com.fdse.scontroller.activity.tasks.TasksWorkflowActivity;
 import com.fdse.scontroller.activity.tasks.TasksWorkflowD3Activity;
 import com.fdse.scontroller.adapter.TaskMineAdapter;
 import com.fdse.scontroller.constant.Constant;
 import com.fdse.scontroller.constant.UrlConstant;
+import com.fdse.scontroller.constant.UserConstant;
 import com.fdse.scontroller.http.HttpUtil;
 import com.fdse.scontroller.model.Task;
 import com.melnykov.fab.FloatingActionButton;
@@ -33,7 +32,6 @@ import com.melnykov.fab.FloatingActionButton;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;

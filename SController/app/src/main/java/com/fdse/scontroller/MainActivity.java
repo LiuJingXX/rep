@@ -7,19 +7,18 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import com.fdse.scontroller.activity.tasks.TasksWorkflowD3Activity;
+import com.fdse.scontroller.constant.Constant;
 import com.fdse.scontroller.fragment.subfragment.HomeFragment;
 import com.fdse.scontroller.fragment.subfragment.PersonFragment;
 import com.fdse.scontroller.fragment.subfragment.TaskFragment;
 import com.fdse.scontroller.heartbeatpackage.HeartBeatService;
-import com.fdse.scontroller.service.MQTTMessage;
 import com.fdse.scontroller.service.MQTTService;
+import com.fdse.scontroller.service.MessageEvent;
+import com.fdse.scontroller.util.NotificationUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -120,9 +119,26 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void getMqttMessage1(MQTTMessage mqttMessage) {
-        Log.i(MQTTService.TAG, "MainActivity收到消息:" + mqttMessage.getMessage());
-        Toast.makeText(this, "MainActivity收到消息:" + mqttMessage.getMessage(), Toast.LENGTH_SHORT).show();
+    public void getMqttMessage1(MessageEvent messageEvent) {
+        int eventType=messageEvent.getEventType();
+        if(eventType== Constant.EVENT_TASK_MINE_NODE_COMPLETE){
+            int taskId=messageEvent.getTaskId();
+            int nodeId=messageEvent.getNodeId();
+            String contentTitle="任务流程更新！";
+            String contentText="任务"+taskId+"已完成至节点"+nodeId;
+            int notificationId=taskId*10+eventType;//唯一标识该通知，之后用于唯一表示这个任务的pendingintent
+            Intent intent = new Intent(this, TasksWorkflowD3Activity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("key", taskId);
+            intent.putExtras(bundle);
+            NotificationUtils.initNotification(this,contentTitle,contentText,intent,notificationId);
+        }else if(eventType== Constant.EVENT_TASK_CROWDSOURCING_NEW){
+
+        }else if(eventType== Constant.EVENT_TASK_SPECIFY_NEW){
+
+        }
+//        Log.i(MQTTService.TAG, "MainActivity收到消息:" + messageEvent.getMessage());
+//        Toast.makeText(this, "MainActivity收到消息:" + messageEvent.getMessage(), Toast.LENGTH_SHORT).show();
     }
 
 }

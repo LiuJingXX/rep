@@ -2,15 +2,16 @@ package com.fdse.scontroller.activity.tasks;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.fdse.scontroller.R;
 import com.fdse.scontroller.constant.UrlConstant;
-import com.fdse.scontroller.service.MQTTMessage;
 import com.fdse.scontroller.service.MQTTService;
 
 import org.greenrobot.eventbus.EventBus;
@@ -24,6 +25,12 @@ public class TasksWorkflowD3Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tasks_workflow_d3);
+        //设置actionbar
+        ActionBar supportActionBar=getSupportActionBar();
+        supportActionBar.setHomeButtonEnabled(true);//设置主键按钮可以点击
+        supportActionBar.setDisplayHomeAsUpEnabled(true);//设置显示返回图标
+
+        //设置webview内容，加载流程图
         Intent intent =getIntent();
         int key = (int) intent.getSerializableExtra("key");
 
@@ -46,21 +53,31 @@ public class TasksWorkflowD3Activity extends AppCompatActivity {
         });
 
         //调用mqtt
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().unregister(this);
-        }
+//        if(EventBus.getDefault().isRegistered(this)) {
+//            EventBus.getDefault().unregister(this);
+//        }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void getMqttMessage2(MQTTMessage mqttMessage){
-        Log.i(MQTTService.TAG,"TaskWorkflowD3Activity收到消息:"+mqttMessage.getMessage());
-        Toast.makeText(this,"TaskWorkflowD3Activity收到消息:"+mqttMessage.getMessage(), Toast.LENGTH_SHORT).show();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish(); // back button
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
+
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void getMqttMessage2(MQTTMessage mqttMessage){
+//        Log.i(MQTTService.TAG,"TaskWorkflowD3Activity收到消息:"+mqttMessage.getMessage());
+//        Toast.makeText(this,"TaskWorkflowD3Activity收到消息:"+mqttMessage.getMessage(), Toast.LENGTH_SHORT).show();
+//    }
 
 }

@@ -9,6 +9,8 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.fdse.scontroller.constant.Constant;
+
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -18,6 +20,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONObject;
 
 /**
  * MQTT长连接服务
@@ -154,12 +157,23 @@ public class MQTTService extends Service {
         @Override
         public void messageArrived(String topic, MqttMessage message) throws Exception {
 
-            String str1 = new String(message.getPayload());
-            MQTTMessage msg = new MQTTMessage();
-            msg.setMessage(str1);
-            EventBus.getDefault().post(msg);
+            String data = new String(message.getPayload());
+            JSONObject jsonObject=new JSONObject(data);
+            int eventType= (int) jsonObject.get("eventType");
+            MessageEvent messageEvent = new MessageEvent();
+            if(eventType== Constant.EVENT_TASK_MINE_NODE_COMPLETE){
+                messageEvent.setEventType(eventType);
+                messageEvent.setTaskId((Integer) jsonObject.get("taskId"));
+                messageEvent.setNodeId((Integer) jsonObject.get("nodeId"));
+                messageEvent.setCompleteTime((String) jsonObject.get("completeTime"));
+            }else if(eventType== Constant.EVENT_TASK_CROWDSOURCING_NEW){
+
+            }else if(eventType== Constant.EVENT_TASK_SPECIFY_NEW){
+
+            }
+
+            EventBus.getDefault().post(messageEvent);
             String str2 = topic + ";qos:" + message.getQos() + ";retained:" + message.isRetained();
-            Log.i(TAG, "messageArrived:" + str1);
             Log.i(TAG, str2);
         }
 
