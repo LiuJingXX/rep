@@ -15,7 +15,7 @@ public class UrlConstant {
     /**
      * App后端url
      */
-    public static final String APP_BACK_END_IP = "192.168.1.142";//142
+    public static final String APP_BACK_END_IP = "192.168.1.148";//142,148
     public static final String APP_BACK_END_PORT = "8080";
 
     //用户登录

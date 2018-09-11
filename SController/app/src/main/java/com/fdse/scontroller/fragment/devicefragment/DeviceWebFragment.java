@@ -43,14 +43,14 @@ public class DeviceWebFragment extends Fragment {
         webView.getSettings().setDisplayZoomControls(false);
 
 //todo 暂时先把下面的注销掉，免得每次运行的时候都一直在请求hass服务，影响效率
-//        webView.loadUrl(mstrLoginUrl);
-//        webView.setWebViewClient(new WebViewClient() {
-//            @Override
-//            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-//                view.loadUrl(url);
-//                return super.shouldOverrideUrlLoading(view, url);
-//            }
-//        });
+        webView.loadUrl(mstrLoginUrl);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return super.shouldOverrideUrlLoading(view, url);
+            }
+        });
 
         return view;
     }
