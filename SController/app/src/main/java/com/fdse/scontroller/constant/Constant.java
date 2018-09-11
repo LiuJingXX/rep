@@ -18,4 +18,5 @@ public class Constant {
     public static final int EVENT_TASK_MINE_NODE_COMPLETE= 1;
     public static final int EVENT_TASK_CROWDSOURCING_NEW= 2;
     public static final int EVENT_TASK_SPECIFY_NEW= 3;
+    //测试git
 }
