@@ -61,7 +61,7 @@ public class UrlConstant {
     public static final String ACTIVITI_PORT = "8080";
 
     //用户登录
-    public static final String ACTIVITI_GET_BPMN= "getOwls";
+    public static final String ACTIVITI_GET_BPMN= "getBpmn";
 
     public static String getActivitiServiceURL(String  service) {
         String serviceURL = String.format("http://%s:%s/%s", ACTIVITI_IP, ACTIVITI_PORT, service);
