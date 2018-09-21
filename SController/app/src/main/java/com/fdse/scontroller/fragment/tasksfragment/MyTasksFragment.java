@@ -30,11 +30,14 @@ import com.fdse.scontroller.model.Task;
 import com.melnykov.fab.FloatingActionButton;
 
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import okhttp3.Call;
@@ -76,9 +79,6 @@ public class MyTasksFragment extends Fragment {
 
         //设置voice附着在ListView，跟随ListView滚动滑入滑出,并设置其点击事件
         setfloatingActionButton();
-
-
-
         return view;
     }
 
@@ -189,12 +189,12 @@ public class MyTasksFragment extends Fragment {
      */
     private void getOwls() {
         //发送post数据
-        final HashMap<String, String> postData = new HashMap<String, String>();
-        postData.put("serviceId", "1234");
+//        final HashMap<String, String> postData = new HashMap<String, String>();
+//        postData.put("serviceId", "1234");
 
-//        String serviceURL = UrlConstant.getOntologyServiceURL(UrlConstant.ONTOLOGY_GET_OWLS);
-        String serviceURL = UrlConstant.getAppBackEndServiceURL(UrlConstant.APP_BACK_END_TASKS_GET_OWLS);
-        HttpUtil.doPost(serviceURL, postData, new Callback() {
+        String serviceURL = UrlConstant.getOntologyServiceURL(UrlConstant.ONTOLOGY_GET_OWLS);
+//        String serviceURL = UrlConstant.getAppBackEndServiceURL(UrlConstant.APP_BACK_END_TASKS_GET_OWLS);
+        HttpUtil.sendOkHttpRequestByGet(serviceURL, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
@@ -203,41 +203,24 @@ public class MyTasksFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String sOwlsJson = response.body().string();
+//                try {
+//                    org.json.JSONObject jsonObject = new org.json.JSONObject(sOwlsJson);
+//                    String code= (String) jsonObject.get("code");
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
                 //向流程引擎发送owls+用户id,返回BPMN，把BPNM解析成List<Node>,Node存储流程节点信息（节点位置，节点名称）
-                getBPMN(sOwlsJson);
-            }
-        });
-    }
-
-    //向流程引擎发送owls+用户id,返回BPMN，把BPNM解析成List<Node>,Node存储流程节点信息（节点位置，节点名称）
-    private void getBPMN(String sOwlsJson) {
-        //发送post数据
-        final HashMap<String, String> postData = new HashMap<String, String>();
-        postData.put("sOwlsJson", sOwlsJson);
-        postData.put("userId", String.valueOf(preferences.getInt("userId", 0)));
-
-        String serviceURL = UrlConstant.getAppBackEndServiceURL(UrlConstant.APP_BACK_END_TASKS_GET_BPMN);
-        HttpUtil.doPost(serviceURL, postData, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                //todo,思考，是不是不用bpmn而使用owls 或者其他渠道去获取我要的信息。
-                String sBPMN = response.body().string();
-                saveTaskInfo(sBPMN);
+                saveTaskInfo(sOwlsJson);
             }
         });
     }
 
     //保存任务信息
-    private void saveTaskInfo(String workflowInfo) {
+    private void saveTaskInfo(String sOwlsJson) {
         //发送post数据
         final HashMap<String, String> postData = new HashMap<String, String>();
-        postData.put("taskName", "我要喝水");
-        postData.put("workflowInfo", workflowInfo);
+        postData.put("taskName", "会议喝水");
+        postData.put("workflowInfo", sOwlsJson);
 
         String serviceURL = UrlConstant.getAppBackEndServiceURL(UrlConstant.APP_BACK_END_TASKS_SAVE_TASK);
         HttpUtil.doPost(serviceURL, postData, new Callback() {
@@ -248,8 +231,36 @@ public class MyTasksFragment extends Fragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                String responceData = response.body().string();
+                Map<String ,String> result = (Map<String, String>) JSONObject.parseObject(responceData, Task.class);
+                //获取到任务id之后再把owls丢给流程执行引擎
+                //todo 把这一块放在后台做
+                getBPMN(result.get("taskId"),result.get("sOwlsJson"));
                 //刷新任务列表
                 showOngoingTasks();
+            }
+        });
+    }
+
+    //todo 把这一块放在后台做
+    //向流程引擎发送owls+用户id,返回BPMN，把BPNM解析成List<Node>,Node存储流程节点信息（节点位置，节点名称）
+    private void getBPMN(String taskId,String sOwlsJson) {
+        //发送post数据
+        final HashMap<String, String> postData = new HashMap<String, String>();
+        postData.put("userId", String.valueOf(preferences.getInt("userId", 0)));
+        postData.put("processId", taskId);
+        postData.put("owls", sOwlsJson);
+
+        String serviceURL = UrlConstant.getActivitiServiceURL(UrlConstant.ACTIVITI_RUN_BPMN_ENGINE);
+        HttpUtil.doPost(serviceURL, postData, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String result = response.body().string();
             }
         });
     }

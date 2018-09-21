@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.fdse.scontroller.constant.Constant;
+import com.fdse.scontroller.constant.UrlConstant;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -36,7 +37,7 @@ public class MQTTService extends Service {
     private MqttConnectOptions conOpt;
 
     //    private String host = "tcp://10.0.2.2:61613";http://127.0.0.1:61680
-    private String host = "tcp://192.168.1.142:61613";
+//    private String host = "tcp://192.168.1.102:61613";
     private String userName = "admin";
     private String passWord = "password";
     private static String myTopic = "topic";
@@ -66,7 +67,7 @@ public class MQTTService extends Service {
 
     private void init() {
         // 服务器地址（协议+地址+端口号）
-        String uri = host;
+        String uri = "tcp://"+ UrlConstant.APP_BACK_END_IP+":61613";
         client = new MqttAndroidClient(this, uri, clientId);
         // 设置MQTT监听并且接受消息
         client.setCallback(mqttCallback);
@@ -163,8 +164,9 @@ public class MQTTService extends Service {
             MessageEvent messageEvent = new MessageEvent();
             if(eventType== Constant.EVENT_TASK_MINE_NODE_COMPLETE){
                 messageEvent.setEventType(eventType);
-                messageEvent.setTaskId((Integer) jsonObject.get("taskId"));
-                messageEvent.setNodeId((Integer) jsonObject.get("nodeId"));
+                int taskId=Integer.parseInt((String) jsonObject.get("taskId"));
+                messageEvent.setTaskId(taskId);
+                messageEvent.setNodeId((String) jsonObject.get("nodeId"));
                 messageEvent.setCompleteTime((String) jsonObject.get("completeTime"));
             }else if(eventType== Constant.EVENT_TASK_CROWDSOURCING_NEW){
 

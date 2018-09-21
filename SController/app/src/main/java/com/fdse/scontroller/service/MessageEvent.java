@@ -5,7 +5,7 @@ public class MessageEvent {
     private int eventType;
     //用于任务流程节点完成时的推送
     private int taskId;
-    private  int nodeId;
+    private  String nodeId;
     private  String completeTime;
 
     public int getEventType() {
@@ -24,11 +24,11 @@ public class MessageEvent {
         this.taskId = taskId;
     }
 
-    public int getNodeId() {
+    public String getNodeId() {
         return nodeId;
     }
 
-    public void setNodeId(int nodeId) {
+    public void setNodeId(String nodeId) {
         this.nodeId = nodeId;
     }
 

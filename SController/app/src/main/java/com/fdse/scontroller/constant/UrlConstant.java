@@ -15,7 +15,7 @@ public class UrlConstant {
     /**
      * App后端url
      */
-    public static final String APP_BACK_END_IP = "192.168.1.148";//142,148
+    public static final String APP_BACK_END_IP = "192.168.1.105";//142,148
     public static final String APP_BACK_END_PORT = "8080";
 
     //用户登录1
@@ -43,11 +43,11 @@ public class UrlConstant {
     /**
      * 本体库平台url
      */
-    public static final String ONTOLOGY_IP = "192.168.1.142";//142
-    public static final String ONTOLOGY_PORT = "8080";
+    public static final String ONTOLOGY_IP = "47.100.23.182";//142
+    public static final String ONTOLOGY_PORT = "8004";
 
     //用户登录
-    public static final String ONTOLOGY_GET_OWLS = "getOwls";
+    public static final String ONTOLOGY_GET_OWLS = "query/compositeServiceQuery?serviceName=IfRoomEmptyService";
 
     public static String getOntologyServiceURL(String  service) {
         String serviceURL = String.format("http://%s:%s/%s", ONTOLOGY_IP, ONTOLOGY_PORT, service);
@@ -57,11 +57,11 @@ public class UrlConstant {
     /**
      * 流程执行引擎url
      */
-    public static final String ACTIVITI_IP = "192.168.1.142";//142
+    public static final String ACTIVITI_IP = "192.168.1.120";//142
     public static final String ACTIVITI_PORT = "8080";
 
     //用户登录
-    public static final String ACTIVITI_GET_BPMN= "getOwls";
+    public static final String ACTIVITI_RUN_BPMN_ENGINE= "runBpmnEngine";
 
     public static String getActivitiServiceURL(String  service) {
         String serviceURL = String.format("http://%s:%s/%s", ACTIVITI_IP, ACTIVITI_PORT, service);

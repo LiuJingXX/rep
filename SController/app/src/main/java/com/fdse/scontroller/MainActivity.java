@@ -123,7 +123,7 @@ public class MainActivity extends FragmentActivity {
         int eventType=messageEvent.getEventType();
         if(eventType== Constant.EVENT_TASK_MINE_NODE_COMPLETE){
             int taskId=messageEvent.getTaskId();
-            int nodeId=messageEvent.getNodeId();
+            String nodeId=messageEvent.getNodeId();
             String contentTitle="任务流程更新！";
             String contentText="任务"+taskId+"已完成至节点"+nodeId;
             int notificationId=taskId*10+eventType;//唯一标识该通知，之后用于唯一表示这个任务的pendingintent
