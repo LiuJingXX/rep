@@ -178,7 +178,7 @@ public class MyTasksFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //向本体库发送任务id,请求owls
-                getOwls();
+                saveTaskInfo();
             }
         });
 
@@ -210,17 +210,17 @@ public class MyTasksFragment extends Fragment {
 //                    e.printStackTrace();
 //                }
                 //向流程引擎发送owls+用户id,返回BPMN，把BPNM解析成List<Node>,Node存储流程节点信息（节点位置，节点名称）
-                saveTaskInfo(sOwlsJson);
+//                saveTaskInfo(sOwlsJson);
             }
         });
     }
 
     //保存任务信息
-    private void saveTaskInfo(String sOwlsJson) {
+    private void saveTaskInfo() {
         //发送post数据
         final HashMap<String, String> postData = new HashMap<String, String>();
-        postData.put("taskName", "会议喝水");
-        postData.put("workflowInfo", sOwlsJson);
+        postData.put("taskName", "IfRoomEmptyService");
+        postData.put("puid", "");
 
         String serviceURL = UrlConstant.getAppBackEndServiceURL(UrlConstant.APP_BACK_END_TASKS_SAVE_TASK);
         HttpUtil.doPost(serviceURL, postData, new Callback() {

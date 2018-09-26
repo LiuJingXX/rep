@@ -15,13 +15,16 @@ public class UrlConstant {
     /**
      * App后端url
      */
-    public static final String APP_BACK_END_IP = "192.168.1.105";//142,148
+    public static final String APP_BACK_END_IP = "192.168.1.115";//142,148
     public static final String APP_BACK_END_PORT = "8080";
 
     //用户登录1
     public static final String APP_BACK_END_USER_LOGIN_SERVICE = "user/login";
 
     public static final String APP_BACK_END_USER_TEST = "user/test";
+
+    //保存位置信息
+    public static final String APP_BACK_END_USER_SAVE_LOCATION= "user/saveLocation";
 
     //测试用--获取owls
     public static final String APP_BACK_END_TASKS_GET_OWLS= "task/getOwls";
