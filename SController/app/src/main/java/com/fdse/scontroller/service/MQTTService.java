@@ -164,7 +164,7 @@ public class MQTTService extends Service {
             MessageEvent messageEvent = new MessageEvent();
             if(eventType== Constant.EVENT_TASK_MINE_NODE_COMPLETE){
                 messageEvent.setEventType(eventType);
-                int taskId=Integer.parseInt((String) jsonObject.get("taskId"));
+                int taskId=(int) jsonObject.get("taskId");
                 messageEvent.setTaskId(taskId);
                 messageEvent.setNodeId((String) jsonObject.get("nodeId"));
                 messageEvent.setCompleteTime((String) jsonObject.get("completeTime"));
