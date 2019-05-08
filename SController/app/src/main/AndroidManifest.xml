@@ -44,6 +44,7 @@
             android:name=".activity.tasks.TasksWorkflowD3Activity"
             android:label="@string/title_activity_tasks_workflow"
             android:icon="@drawable/ic_access_time_24dp"></activity>
+        <activity android:name=".activity.tasks.ServiceListActivity"></activity>
 
         <!--<service-->
             <!--android:name=".heartbeatpackage.PollingService"-->

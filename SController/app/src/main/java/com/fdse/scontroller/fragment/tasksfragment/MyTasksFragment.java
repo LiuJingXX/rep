@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fdse.scontroller.R;
+import com.fdse.scontroller.activity.tasks.ServiceListActivity;
+import com.fdse.scontroller.activity.tasks.TasksWorkflowActivity;
 import com.fdse.scontroller.activity.tasks.TasksWorkflowD3Activity;
 import com.fdse.scontroller.adapter.TaskMineAdapter;
 import com.fdse.scontroller.constant.Constant;
@@ -86,6 +88,12 @@ public class MyTasksFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        showOngoingTasks();
+        super.onResume();
     }
 
 
@@ -178,7 +186,11 @@ public class MyTasksFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //向本体库发送任务id,请求owls
-                saveTaskInfo();
+//                saveTaskInfo();
+                //跳转到服务列表页面，调用服务
+                Intent intent=new Intent(getActivity(), ServiceListActivity.class);
+                //利用上下文开启跳转
+                startActivity(intent);
             }
         });
 
@@ -215,32 +227,7 @@ public class MyTasksFragment extends Fragment {
         });
     }
 
-    //保存任务信息
-    private void saveTaskInfo() {
-        //发送post数据
-        final HashMap<String, String> postData = new HashMap<String, String>();
-        postData.put("taskName", "IfRoomEmptyService");
-        postData.put("puid", "");
 
-        String serviceURL = UrlConstant.getAppBackEndServiceURL(UrlConstant.APP_BACK_END_TASKS_SAVE_TASK);
-        HttpUtil.doPost(serviceURL, postData, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String responceData = response.body().string();
-                Map<String ,String> result = (Map<String, String>) JSONObject.parseObject(responceData, Task.class);
-                //获取到任务id之后再把owls丢给流程执行引擎
-                //todo 把这一块放在后台做
-                getBPMN(result.get("taskId"),result.get("sOwlsJson"));
-                //刷新任务列表
-                showOngoingTasks();
-            }
-        });
-    }
 
     //todo 把这一块放在后台做
     //向流程引擎发送owls+用户id,返回BPMN，把BPNM解析成List<Node>,Node存储流程节点信息（节点位置，节点名称）

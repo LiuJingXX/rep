@@ -274,11 +274,11 @@ public class LoginActivity extends FragmentActivity {
 //            startActivity(intent);
 
             //数据加密
-            final String encryptedEmail = RSAUtils.encryptByPublicKey(email);
-            final String encryptedPassword = RSAUtils.encryptByPublicKey(password);
+//            final String encryptedEmail = RSAUtils.encryptByPublicKey(email);
+//            final String encryptedPassword = RSAUtils.encryptByPublicKey(password);
 
-            postData.put("encryptedEmail", encryptedEmail);
-            postData.put("encryptedPassword", encryptedPassword);
+            postData.put("encryptedEmail", email);
+            postData.put("encryptedPassword", password);
 
             String serviceURL = UrlConstant.getAppBackEndServiceURL(UrlConstant.APP_BACK_END_USER_LOGIN_SERVICE);
             HttpUtil.doPost(serviceURL, postData, new okhttp3.Callback() {
