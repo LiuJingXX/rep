@@ -112,22 +112,24 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent serviceIntent = new Intent(MainActivity.this, HeartBeatService.class);
-        startService(serviceIntent);
+        //Todo 这目前没有用
+//        Intent serviceIntent = new Intent(MainActivity.this, HeartBeatService.class);
+//        startService(serviceIntent);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         //碎片管理
         fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        //初始时假如homeFragment碎片
+        //初始时加入homeFragment碎片
         homeFragment = new HomeFragment();
         transaction.add(R.id.main_fragment_container, homeFragment);
         transaction.commit();
 
         //调用mqtt
         EventBus.getDefault().register(this);
-        startService(new Intent(this, MQTTService.class));
+//        Todo 开启Mqtt
+//        startService(new Intent(this, MQTTService.class));
 
         //获取定位
         getLocation(this);

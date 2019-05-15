@@ -60,6 +60,7 @@ public class LoginActivity extends FragmentActivity {
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
+    Button mEmailSignInButton;
     ProgressDialog progressDialog;
 //    private View mProgressView;
 //    private View mLoginFormView;
@@ -68,8 +69,7 @@ public class LoginActivity extends FragmentActivity {
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
 
-    private String email , password;
-
+    private String email, password;
 
 
     @Override
@@ -81,7 +81,7 @@ public class LoginActivity extends FragmentActivity {
 //        populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
 //        mLoginFormView = findViewById(R.id.login_form);
 //        mProgressView = findViewById(R.id.login_progress);
 
@@ -94,30 +94,27 @@ public class LoginActivity extends FragmentActivity {
         preferences = getSharedPreferences(Constant.PREFERENCES_USER_INFO, Activity.MODE_PRIVATE);
         editor = preferences.edit();
 
-        //判断是否有登录信息，实现自动登录
-        if (!judgeLogin()) {
-
-            mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                    if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                        attemptLogin();
-                        return true;
-                    }
-                    return false;
-                }
-            });
-
-            mEmailSignInButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
+        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
                     attemptLogin();
+                    return true;
                 }
-            });
+                return false;
+            }
+        });
 
-        }
-        else{
-            if (progressDialog != null && !progressDialog.isShowing()){
+        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                attemptLogin();
+            }
+        });
+
+        //判断是否有登录信息，实现自动登录
+        if (judgeLogin()) {
+            if (progressDialog != null && !progressDialog.isShowing()) {
                 progressDialog.show();
             }
             login();
@@ -196,7 +193,6 @@ public class LoginActivity extends FragmentActivity {
     }
 
 
-
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
@@ -213,7 +209,7 @@ public class LoginActivity extends FragmentActivity {
 
         // Store values at the time of the login attempt.
         email = mEmailView.getText().toString();
-         password = mPasswordView.getText().toString();
+        password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
@@ -258,9 +254,8 @@ public class LoginActivity extends FragmentActivity {
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 3;
+        return password.length() >= 3;
     }
-
 
 
     private void login() {
@@ -268,7 +263,7 @@ public class LoginActivity extends FragmentActivity {
         /*发送post登录请求*/
         final HashMap<String, String> postData = new HashMap<String, String>();
 
-        try{
+        try {
             //todo 暂时就这么做
 //            Intent intent = new Intent(LoginActivity.this,MainActivity.class);
 //            startActivity(intent);
@@ -289,29 +284,29 @@ public class LoginActivity extends FragmentActivity {
                         //获取session的操作，session放在cookie头，且取出后含有“；”，取出后为下面的 s （也就是jsesseionid）
                         Headers headers = response.headers();
                         List<String> cookies = headers.values("Set-Cookie");
-                        if(cookies.size()>0){
+                        if (cookies.size() > 0) {
                             String session = cookies.get(0);
-                            Global.sessionId= session.substring(0, session.indexOf(";"));
+                            Global.sessionId = session.substring(0, session.indexOf(";"));
                         }
 
-                        String responceData=response.body().string();
+                        String responceData = response.body().string();
                         JSONObject jsonObject = new JSONObject(responceData);
-                        int result= (int) jsonObject.get("result");
-                        JSONObject userInfo= (JSONObject) jsonObject.get("userInfo");
-                        if (result==UserConstant.RESULT_SUCCESS) {
+                        int result = (int) jsonObject.get("result");
+                        JSONObject userInfo = (JSONObject) jsonObject.get("userInfo");
+                        if (result == UserConstant.RESULT_SUCCESS) {
                             editor.putInt("userId", (Integer) userInfo.get("id"));
                             editor.putString("email", (String) userInfo.get("email"));
-                            editor.putString("password",(String) userInfo.get("password"));
-                            editor.putString("userName",(String) userInfo.get("userName"));
+                            editor.putString("password", (String) userInfo.get("password"));
+                            editor.putString("userName", (String) userInfo.get("userName"));
                             editor.commit();
-                            Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
                             finish();
-                        } else if(result==UserConstant.RESULT_ACCOUNT_NOT_EXIST){
+                        } else if (result == UserConstant.RESULT_ACCOUNT_NOT_EXIST) {
                             showLoginFailed(UserConstant.RESULT_ACCOUNT_NOT_EXIST);
-                        }else if(result==UserConstant.RESULT_WRONG_PASSWORD){
+                        } else if (result == UserConstant.RESULT_WRONG_PASSWORD) {
                             showLoginFailed(UserConstant.RESULT_WRONG_PASSWORD);
-                        }else if(result==UserConstant.RESULT_SERVER_ERROR){
+                        } else if (result == UserConstant.RESULT_SERVER_ERROR) {
                             showLoginFailed(UserConstant.RESULT_SERVER_ERROR);
                         }
 //                        ServletResponseData responseData = JSONUtils.toBean(response.body().string(), ServletResponseData.class);
@@ -347,12 +342,10 @@ public class LoginActivity extends FragmentActivity {
                 }
 
             });
-        }
-        catch(Exception e){
+        } catch (Exception e) {
 
         }
     }
-
 
 
     //show the login failed message
@@ -371,8 +364,7 @@ public class LoginActivity extends FragmentActivity {
                     mPasswordView.requestFocus();
                 } else if (result == -3) {
                     Toast.makeText(LoginActivity.this, getString(R.string.error_internal_server_error), Toast.LENGTH_SHORT).show();
-                }
-                else{
+                } else {
                     Toast.makeText(LoginActivity.this,
                             String.valueOf(result), Toast.LENGTH_SHORT).show();
                 }
