@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fdse.scontroller.R;
+import com.fdse.scontroller.activity.devices.NewDeviceListFragment;
 import com.fdse.scontroller.adapter.HomeDeviceViewPagerAdapter;
 import com.fdse.scontroller.fragment.devicefragment.DeviceListFragment;
 import com.fdse.scontroller.fragment.devicefragment.DeviceWebFragment;
@@ -60,7 +61,7 @@ public class HomeFragment extends Fragment {
 
         //初始化viewPager//加载viewpage ,这次加载的有设备list的DeviceListFragment和设备web图的DeviceWebFragment
         //获取两个fragment
-        DeviceListFragment fragment1 = new DeviceListFragment();
+        NewDeviceListFragment fragment1 = new NewDeviceListFragment();
         DeviceWebFragment fragment2 = new DeviceWebFragment();
         // 将要分页显示的View装入数组中
         viewPageList= new ArrayList<Fragment>();
