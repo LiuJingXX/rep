@@ -269,6 +269,14 @@ public class LoginActivity extends FragmentActivity {
         final HashMap<String, String> postData = new HashMap<String, String>();
 
         try{
+//            editor.putInt("userId", 10086);
+//            editor.putString("email", "Test123@126.com");
+//            editor.putString("password","test123");
+//            editor.putString("userName","test");
+//            editor.commit();
+//            Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+//            startActivity(intent);
+//            finish();
             //todo 暂时就这么做
 //            Intent intent = new Intent(LoginActivity.this,MainActivity.class);
 //            startActivity(intent);
