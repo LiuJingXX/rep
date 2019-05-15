@@ -74,7 +74,6 @@ public class DeviceListFragment extends Fragment {
 
 
     private void setSwipeRefresh(View view){
-
         swipeRefreshView = (SwipeRefreshLayout) view.findViewById(R.id.swipe_home_device);
         // 设置颜色属性的时候一定要注意是引用了资源文件还是直接设置16进制的颜色，因为都是int值容易搞混
         // 设置下拉进度的背景颜色，默认就是白色的
