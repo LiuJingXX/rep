@@ -91,4 +91,18 @@ public class UrlConstant {
         return serviceURL;
     }
 
+    /**
+     * 拍立淘接口
+     */
+    public static final String PAILITAO_IP = "172.20.10.2";//142,148
+    public static final String PAILITAO_PORT = "8080";
+
+    //调用拍立淘获取设备信息
+    public static final String PAILITAO_GET_DEVICE_INFO= "file/addDeviceImage";
+
+    public static String getPailitaoServiceURL(String  service) {
+        String serviceURL = String.format("http://%s:%s/%s", PAILITAO_IP, PAILITAO_PORT, service);
+        return serviceURL;
+    }
+
 }
