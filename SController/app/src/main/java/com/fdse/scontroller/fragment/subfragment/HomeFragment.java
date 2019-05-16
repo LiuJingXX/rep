@@ -1,5 +1,6 @@
 package com.fdse.scontroller.fragment.subfragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,10 +17,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fdse.scontroller.R;
+import com.fdse.scontroller.activity.devices.AddDeviceActivity;
 import com.fdse.scontroller.activity.devices.NewDeviceListFragment;
 import com.fdse.scontroller.adapter.HomeDeviceViewPagerAdapter;
 import com.fdse.scontroller.fragment.devicefragment.DeviceListFragment;
 import com.fdse.scontroller.fragment.devicefragment.DeviceWebFragment;
+import com.fdse.scontroller.fragment.devicefragment.DeviceWebFragment1;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,10 +66,12 @@ public class HomeFragment extends Fragment {
         //获取两个fragment
         NewDeviceListFragment fragment1 = new NewDeviceListFragment();
         DeviceWebFragment fragment2 = new DeviceWebFragment();
+        DeviceWebFragment1 fragment3 = new DeviceWebFragment1();
         // 将要分页显示的View装入数组中
         viewPageList= new ArrayList<Fragment>();
         viewPageList.add(fragment1);
         viewPageList.add(fragment2);
+        viewPageList.add(fragment3);
         //实例化适配器
         viewPager.setAdapter(new HomeDeviceViewPagerAdapter(getActivity().getSupportFragmentManager(), viewPageList));
 //        viewPager.addOnPageChangeListener(this);//设置页面切换时的监听器(可选，用了之后要重写它的回调方法处理页面切换时候的事务)
@@ -82,7 +87,7 @@ public class HomeFragment extends Fragment {
                 //获取菜单填充器
                 MenuInflater inflater = popup.getMenuInflater();
                 //填充菜单
-                inflater.inflate(R.menu.home, popup.getMenu());
+                inflater.inflate(R.menu.change_home, popup.getMenu());
                 //绑定菜单项的点击事件
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
@@ -113,7 +118,32 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "新增设备",Toast.LENGTH_LONG).show();
+                //创建弹出式菜单对象（最低版本11）
+                PopupMenu popup = new PopupMenu(getActivity(), v);//第二个参数是绑定的那个view
+                //获取菜单填充器
+                MenuInflater inflater = popup.getMenuInflater();
+                //填充菜单
+                inflater.inflate(R.menu.add_device, popup.getMenu());
+                //绑定菜单项的点击事件
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.item_add:
+                                Intent intent0 = new Intent(getContext(),AddDeviceActivity.class);
+                                startActivity(intent0);
+                                break;
+                            case R.id.item_location:
+                                Toast.makeText(getActivity(), "设备定位",Toast.LENGTH_LONG).show();
+                                break;
+                            default:
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                //显示(这一行代码不要忘记了)
+                popup.show();
             }
         });
 

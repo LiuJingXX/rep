@@ -15,8 +15,7 @@ public class UrlConstant {
     /**
      * App后端url
      */
-    public static final String APP_BACK_END_IP = "fudanse.club";//142,148
-//    public static final String APP_BACK_END_IP = "192.168.1.184";//142,148
+    public static final String APP_BACK_END_IP = "fudanse.club";
     public static final String APP_BACK_END_PORT = "80/sc";
 
     //用户登录1
@@ -38,6 +37,7 @@ public class UrlConstant {
 
     //获取所有任务列表
     public static final String APP_BACK_END_TASKS_GET_ONGOING_TASKS= "task/getOngoingTasks";
+
 
     public static String getAppBackEndServiceURL(String  service) {
         String serviceURL = String.format("http://%s:%s/%s", APP_BACK_END_IP, APP_BACK_END_PORT, service);
@@ -75,5 +75,20 @@ public class UrlConstant {
     /**
      * 众包平台url
      */
+
+
+    /**
+     * 文件服务器
+     */
+    public static final String FILE_IP = "172.20.10.2";//142,148
+    public static final String FILE_PORT = "8080";
+
+    //上传设备发现裁剪图片
+    public static final String FILE_ADD_DEVICE_IMAGE= "file/addDeviceImage";
+
+    public static String getFlieServiceURL(String  service) {
+        String serviceURL = String.format("http://%s:%s/%s", FILE_IP, FILE_PORT, service);
+        return serviceURL;
+    }
 
 }

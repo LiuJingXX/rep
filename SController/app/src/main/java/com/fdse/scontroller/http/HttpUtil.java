@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import okhttp3.FormBody;
+import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -28,7 +29,7 @@ public class HttpUtil {
     private static final MediaType MEDIA_TYPE_JPEG = MediaType.parse("image/jpeg");
     private static final MediaType MEDIA_TYPE_XML = MediaType.parse("text/xml; charset=utf-8");
 
-    //Get请求，只获取数据，不发送数据
+    //Get请求，获取HASS设备列表
     public void getHASSApiState(String serviceURL,String hassPwd, okhttp3.Callback callback){
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
@@ -50,12 +51,12 @@ public class HttpUtil {
     }
 
     //Post请求，发送数据的同时获取并返回数据
-    public static void doPost(String serviceURL, HashMap<String,String> map, okhttp3.Callback callback){
+    public static void doPost(String serviceURL, HashMap<String, String> map, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient();
         FormBody.Builder formBody = new FormBody.Builder();
         //添加要发送的数据
-        for(Map.Entry<String, String> entry: map.entrySet()){
-            formBody.add(entry.getKey(),entry.getValue());
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            formBody.add(entry.getKey(), entry.getValue());
         }
         RequestBody body = formBody.build();
         //发送请求
@@ -68,14 +69,14 @@ public class HttpUtil {
     }
 
     //上传文件
-    public static void uploadFile(String filePath,HashMap<String,String> map, okhttp3.Callback callback){
+    public static void uploadFile(String filePath, HashMap<String, String> map, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient();
         String fileName = map.get("fileName");
 
         //构建请求体
         MultipartBody.Builder builder = new MultipartBody.Builder();
         builder.setType(MultipartBody.FORM);
-        builder.addFormDataPart("fileName",fileName);
+        builder.addFormDataPart("fileName", fileName);
         builder.addFormDataPart("upload", filePath,
                 RequestBody.create(MEDIA_TYPE_XML, new File(filePath)));
         RequestBody body = builder.build();
@@ -89,49 +90,38 @@ public class HttpUtil {
     }
 
     //上传图片
-    public static void uploadImage(HashMap<String,String> map, okhttp3.Callback callback) {
+    public static void uploadImage(String serviceURL,String filePath, HashMap<String, String> maps, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient();
-        String imageName = map.get("imageName");
-        String startImagePath = map.get("startImagePath");
-        String endImagePath = map.get("endImagePath");
 
         //构建请求体
         MultipartBody.Builder builder = new MultipartBody.Builder();
         builder.setType(MultipartBody.FORM);
-        builder.addFormDataPart("imageName", imageName);
+        if (maps == null) {
+            File file=new File(filePath);
+            builder.addFormDataPart("fileName", "filename212",
+                    RequestBody.create(MEDIA_TYPE_JPEG, file));
+        } else {
+            for (String key : maps.keySet()) {
+                builder.addFormDataPart(key, maps.get(key));
+            }
+            File file=new File(filePath);
+            builder.addFormDataPart("fileName", "fileName",
+                    RequestBody.create(MEDIA_TYPE_JPEG, file));
 
-        //start location需要上传图片
-        if(startImagePath != ""){
-            builder.addFormDataPart("startImagePath", startImagePath,
-                    RequestBody.create(MEDIA_TYPE_JPEG, new File(startImagePath)));
-        }
-        //start location不需要上传图片
-        else{
-            builder.addFormDataPart("startImagePath", "");
-        }
-        
-        //end location需要上传图片
-        if(endImagePath != ""){
-            builder.addFormDataPart("endImagePath", endImagePath,
-                    RequestBody.create(MEDIA_TYPE_JPEG, new File(endImagePath)));
-        }
-        //end location不需要上传图片
-        else{
-            builder.addFormDataPart("endImagePath", "");
         }
 
         RequestBody body = builder.build();
 
-        //发送请求
-//        Request request = new Request.Builder()
-//                .url(String.format("http://%s:%s/%s/%s", ip, port, resource_name, UPLOAD_IMAGE_SERVLET))
-//                .post(body)
-//                .build();
-//        client.newCall(request).enqueue(callback);
+        Request request = new Request.Builder()
+                .addHeader("cookie", Global.sessionId)
+                .url(serviceURL)
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(callback);
     }
 
     //下载文件
-    public static void downloadFile(String fileUrl,okhttp3.Callback callback){
+    public static void downloadFile(String fileUrl, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient();
         //发送请求
         Request request = new Request.Builder()

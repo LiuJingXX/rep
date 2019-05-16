@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ProgressBar;
 
 import com.fdse.scontroller.R;
 
@@ -23,10 +22,10 @@ import com.fdse.scontroller.R;
  *     version: 1.0
  * </pre>
  */
-public class DeviceWebFragment extends Fragment {
+public class DeviceWebFragment1 extends Fragment {
 
     private WebView webView;
-    private String mstrLoginUrl = "http://10.131.253.117:5050/fdse";
+    private String mstrLoginUrl = "http://10.131.253.117:8123/floorplan";
 
     @Nullable
     @Override
@@ -41,6 +40,11 @@ public class DeviceWebFragment extends Fragment {
         webView.getSettings().setBuiltInZoomControls(true);
         //不显示webview缩放按钮
         webView.getSettings().setDisplayZoomControls(false);
+        webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+        webView.getSettings().setAllowFileAccess(true);
+        webView.getSettings().setAppCacheEnabled(true);
+        webView.getSettings().setDomStorageEnabled(true);
+        webView.getSettings().setDatabaseEnabled(true);
 
 //todo 暂时先把下面的注销掉，免得每次运行的时候都一直在请求hass服务，影响效率
         webView.loadUrl(mstrLoginUrl);
