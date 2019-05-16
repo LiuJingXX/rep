@@ -75,6 +75,11 @@
 
         </activity>
 
+        <activity
+            android:name=".activity.devices.NewDeviceDetailActivity"
+            android:label="@string/title_activity_new_device_detail"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.fdse.scontroller.fileprovider"
