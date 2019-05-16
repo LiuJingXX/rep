@@ -21,4 +21,5 @@
         completions."
     </string>
     <string name="title_activity_tasks_workflow">流程信息</string>
+    <string name="title_activity_add_device">设备发现</string>
 </resources>
