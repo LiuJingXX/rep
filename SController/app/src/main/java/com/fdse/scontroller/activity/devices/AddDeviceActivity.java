@@ -65,10 +65,10 @@ public class AddDeviceActivity extends BaseActivity {
         setContentView(R.layout.activity_add_device);
         preferences = getSharedPreferences(Constant.PREFERENCES_USER_INFO, Activity.MODE_PRIVATE);
         listView = (ListView) findViewById(R.id.list_view);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
         photo = (ImageView) findViewById(R.id.photo);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab_camera);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -178,8 +178,6 @@ public class AddDeviceActivity extends BaseActivity {
                     String responceData = response.body().string();
                     //设置数据
                     getDeviceList(responceData);
-                    //显示查询到的设备信息（列表）
-                    showDeviceList();
                 } catch (Exception e) {
                     e.printStackTrace();
                     showUploadFailed("设备信息解析失败");
@@ -198,7 +196,8 @@ public class AddDeviceActivity extends BaseActivity {
             HomeDevice homeDevice1 =new HomeDevice(R.drawable.home_saodijiqiren,"扫地机器人","正在运行");
             deviceList.add(homeDevice1);
         }
-
+        //显示查询到的设备信息（列表）
+        showDeviceList();
     }
 
     private void showDeviceList() throws JSONException {

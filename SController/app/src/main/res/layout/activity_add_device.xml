@@ -29,11 +29,11 @@
         android:background="@mipmap/ic_launcher_round" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/fab_camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:icon="@drawable/ic_camera_alt_black" />
+        app:icon="@drawable/ic_camera" />
 
 </android.support.design.widget.CoordinatorLayout>
