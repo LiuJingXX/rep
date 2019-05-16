@@ -1,5 +1,6 @@
 package com.fdse.scontroller.activity.devices;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,7 +10,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.fdse.scontroller.R;
 import com.fdse.scontroller.adapter.HomeDeviceAdapter;
@@ -154,12 +157,9 @@ public class NewDeviceListFragment extends Fragment  {
         swipeRefreshView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
             @Override
             public void onRefresh() {
-                //homeDeviceAdapter.clear();
                 homeDeviceList.clear();
-                //homeDeviceAdapter.notifyDataSetChanged();
                 initHomeDevice();
                 homeDeviceAdapter.notifyDataSetChanged();
-                //listView.setAdapter(homeDeviceAdapter);
                 swipeRefreshView.setRefreshing(false);
             }
         });
@@ -177,7 +177,21 @@ public class NewDeviceListFragment extends Fragment  {
         homeDeviceAdapter = new HomeDeviceAdapter(getActivity(),
                 R.layout.item_home_deivce, homeDeviceList);
         listView.setAdapter(homeDeviceAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), NewDeviceDetailActivity.class);
+                intent.putExtra("position", position);
+                startActivity(intent);
+                //Toast.makeText(getActivity(),"点击Item,位置=" + position+",Id="+id, Toast.LENGTH_SHORT).show();
+            }
+        });
+//        new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
 
+//            }
+//        }
         //设置下拉刷新
         setSwipeRefresh(view);
 
