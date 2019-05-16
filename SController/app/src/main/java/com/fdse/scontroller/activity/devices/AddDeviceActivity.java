@@ -1,7 +1,9 @@
 package com.fdse.scontroller.activity.devices;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -20,13 +22,26 @@ import android.widget.Toast;
 
 import com.fdse.scontroller.R;
 import com.fdse.scontroller.activity.BaseActivity;
+import com.fdse.scontroller.constant.Constant;
+import com.fdse.scontroller.constant.UrlConstant;
+import com.fdse.scontroller.constant.UserConstant;
+import com.fdse.scontroller.http.HttpUtil;
 import com.fdse.scontroller.util.PhotoUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 public class AddDeviceActivity extends BaseActivity {
 
     private ImageView photo;
+    private FloatingActionButton fab;
     private static final int CODE_GALLERY_REQUEST = 0xa0;
     private static final int CODE_CAMERA_REQUEST = 0xa1;
     private static final int CODE_RESULT_REQUEST = 0xa2;
@@ -34,22 +49,20 @@ public class AddDeviceActivity extends BaseActivity {
     private File fileCropUri = new File(Environment.getExternalStorageDirectory().getPath() + "/crop_photo.jpg");
     private Uri imageUri;
     private Uri cropImageUri;
+    SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_device);
+        preferences = getSharedPreferences(Constant.PREFERENCES_USER_INFO, Activity.MODE_PRIVATE);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         photo = (ImageView) findViewById(R.id.photo);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
                 gotoCaptureCrop();
             }
         });
@@ -104,6 +117,7 @@ public class AddDeviceActivity extends BaseActivity {
                     Bitmap bitmap = PhotoUtils.getBitmapFromUri(cropImageUri, this);
                     if (bitmap != null) {
                         showImages(bitmap);
+                        uploadImage(cropImageUri.getPath());
                     }
                     break;
             }
@@ -113,6 +127,38 @@ public class AddDeviceActivity extends BaseActivity {
 
     private void showImages(Bitmap bitmap) {
         photo.setImageBitmap(bitmap);
+    }
+
+    private void uploadImage(String filePath) {
+        final HashMap<String, String> postData = new HashMap<String, String>();
+        String serviceURL = UrlConstant.getFlieServiceURL(UrlConstant.FILE_ADD_DEVICE_IMAGE);
+        postData.put("userId", String.valueOf(preferences.getInt("userId", 0)));
+        HttpUtil.uploadImage(serviceURL, filePath, postData, new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                showUploadFailed("图片上传失败");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    String responceData = response.body().string();
+                    JSONObject jsonObject = null;
+                    jsonObject = new JSONObject(responceData);
+                    String url = (String) jsonObject.get("url");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showUploadFailed("图片上传失败，获取url失败");
+                }
+
+            }
+        });
+    }
+
+
+    private void showUploadFailed(String error) {
+        Snackbar.make(fab, error, Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
     }
 
     /**
