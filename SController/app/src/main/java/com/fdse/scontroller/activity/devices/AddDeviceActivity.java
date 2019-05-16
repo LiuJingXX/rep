@@ -18,14 +18,17 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.fdse.scontroller.R;
 import com.fdse.scontroller.activity.BaseActivity;
+import com.fdse.scontroller.adapter.HomeDeviceAdapter;
 import com.fdse.scontroller.constant.Constant;
 import com.fdse.scontroller.constant.UrlConstant;
 import com.fdse.scontroller.constant.UserConstant;
 import com.fdse.scontroller.http.HttpUtil;
+import com.fdse.scontroller.model.HomeDevice;
 import com.fdse.scontroller.util.PhotoUtils;
 
 import org.json.JSONException;
@@ -33,7 +36,9 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -50,12 +55,16 @@ public class AddDeviceActivity extends BaseActivity {
     private Uri imageUri;
     private Uri cropImageUri;
     SharedPreferences preferences;
+    private List<HomeDevice> deviceList = new ArrayList<HomeDevice>();
+    private HomeDeviceAdapter homeDeviceAdapter;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_device);
         preferences = getSharedPreferences(Constant.PREFERENCES_USER_INFO, Activity.MODE_PRIVATE);
+        listView = (ListView) findViewById(R.id.list_view);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         photo = (ImageView) findViewById(R.id.photo);
@@ -142,10 +151,8 @@ public class AddDeviceActivity extends BaseActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 try {
-                    String responceData = response.body().string();
-                    JSONObject jsonObject = null;
-                    jsonObject = new JSONObject(responceData);
-                    String url = (String) jsonObject.get("url");
+                    String url = response.body().string();
+                    getDeviceInfo(url);
                 } catch (Exception e) {
                     e.printStackTrace();
                     showUploadFailed("图片上传失败，获取url失败");
@@ -153,6 +160,51 @@ public class AddDeviceActivity extends BaseActivity {
 
             }
         });
+    }
+
+    private void getDeviceInfo(String url) {
+        final HashMap<String, String> postData = new HashMap<String, String>();
+        String serviceURL = UrlConstant.getPailitaoServiceURL(UrlConstant.PAILITAO_GET_DEVICE_INFO);
+        postData.put("url", url);
+        HttpUtil.doPost(serviceURL, postData, new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                showUploadFailed("获取设备信息失败");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    String responceData = response.body().string();
+                    //设置数据
+                    getDeviceList(responceData);
+                    //显示查询到的设备信息（列表）
+                    showDeviceList();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showUploadFailed("设备信息解析失败");
+                }
+
+            }
+        });
+    }
+
+    private void getDeviceList(String responceData) throws JSONException {
+        JSONObject jsonObject = null;
+        jsonObject = new JSONObject(responceData);
+        String url = (String) jsonObject.get("url");
+        List<Object> list = (List<Object>) jsonObject.get("data");
+        for(int i = 0; i < list.size(); i++){
+            HomeDevice homeDevice1 =new HomeDevice(R.drawable.home_saodijiqiren,"扫地机器人","正在运行");
+            deviceList.add(homeDevice1);
+        }
+
+    }
+
+    private void showDeviceList() throws JSONException {
+        homeDeviceAdapter = new HomeDeviceAdapter(this,
+                R.layout.item_home_deivce, deviceList);
+        listView.setAdapter(homeDeviceAdapter);
     }
 
 
