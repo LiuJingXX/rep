@@ -86,14 +86,16 @@ public class HttpUtil {
         MultipartBody.Builder builder = new MultipartBody.Builder();
         builder.setType(MultipartBody.FORM);
         if (maps == null) {
-            builder.addFormDataPart("name12", "filename212",
-                    RequestBody.create(MEDIA_TYPE_JPEG, new File(filePath)));
+            File file=new File(filePath);
+            builder.addFormDataPart("fileName", "filename212",
+                    RequestBody.create(MEDIA_TYPE_JPEG, file));
         } else {
             for (String key : maps.keySet()) {
                 builder.addFormDataPart(key, maps.get(key));
             }
-            builder.addFormDataPart("name12", "filename212",
-                    RequestBody.create(MEDIA_TYPE_JPEG, new File(filePath)));
+            File file=new File(filePath);
+            builder.addFormDataPart("fileName", "fileName",
+                    RequestBody.create(MEDIA_TYPE_JPEG, file));
 
         }
 

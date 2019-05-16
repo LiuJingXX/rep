@@ -80,7 +80,7 @@ public class UrlConstant {
     /**
      * 文件服务器
      */
-    public static final String FILE_IP = "127.0.0.1";//142,148
+    public static final String FILE_IP = "172.20.10.2";//142,148
     public static final String FILE_PORT = "8080";
 
     //上传设备发现裁剪图片
