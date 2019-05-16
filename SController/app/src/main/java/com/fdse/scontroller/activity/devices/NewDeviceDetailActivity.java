@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fdse.scontroller.MainActivity;
 import com.fdse.scontroller.R;
 
 public class NewDeviceDetailActivity extends AppCompatActivity {
@@ -34,7 +35,10 @@ public class NewDeviceDetailActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(NewDeviceDetailActivity.this,"To be continue...",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(NewDeviceDetailActivity.this,"To be continue...",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(NewDeviceDetailActivity.this, MainActivity.class);
+                intent.putExtra("fragment_id",0);
+                startActivity(intent);
             }
         });
     }
