@@ -17,6 +17,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
 }
 
 dependencies {
@@ -46,4 +50,10 @@ dependencies {
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.0'
     //eventbus
     implementation 'org.greenrobot:eventbus:3.0.0'
+    // http
+    implementation 'com.squareup.okhttp3:okhttp:3.7.0'
+    implementation 'com.squareup.okio:okio:1.12.0'
+    // JSON parser
+    api 'com.google.code.gson:gson:2.7'
+
 }

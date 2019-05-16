@@ -29,8 +29,19 @@ public class HttpUtil {
     private static final MediaType MEDIA_TYPE_JPEG = MediaType.parse("image/jpeg");
     private static final MediaType MEDIA_TYPE_XML = MediaType.parse("text/xml; charset=utf-8");
 
+    //Get请求，获取HASS设备列表
+    public void getHASSApiState(String serviceURL,String hassPwd, okhttp3.Callback callback){
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .addHeader("Content-Type","application/json")
+                .addHeader("X-HA-Access", hassPwd)
+                .url(serviceURL)
+                .build();
+        client.newCall(request).enqueue(callback);
+    }
+
     //Get请求，只获取数据，不发送数据
-    public static void sendOkHttpRequestByGet(String serviceURL, okhttp3.Callback callback) {
+    public static void sendOkHttpRequestByGet(String serviceURL,okhttp3.Callback callback){
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .addHeader("cookie", Global.sessionId)
