@@ -71,9 +71,14 @@ public class NewDeviceListFragment extends Fragment  {
                     JSONArray jarr = new JSONArray(deviceList);
                     JSONObject result = jarr.getJSONObject(position);
                     intent.putExtra("device_detail", result.toString());
+
+                    // 获取特殊设备，通过url跳转到第三方页面
+                    String entity_id= result.getString("entity_id");
+                    intent.putExtra("layout","webview");
                 }catch(JSONException e){
                     e.printStackTrace();
                 }
+
                 startActivity(intent);
 
                 //Toast.makeText(getActivity(),"device_name=" + device_name.getText().toString()+",device_sate="+device_sate.getText().toString(), Toast.LENGTH_SHORT).show();
@@ -105,7 +110,7 @@ public class NewDeviceListFragment extends Fragment  {
 
         getDeviceList();
         try{
-            Thread.sleep(1000);
+            Thread.sleep(1200);
         }catch (InterruptedException e){
             e.printStackTrace();
         }
@@ -207,5 +212,13 @@ public class NewDeviceListFragment extends Fragment  {
         if(firstPosition!=0&&top!=0){
             listView.setSelectionFromTop(firstPosition, top);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        editor.remove("Device_ListView_FirstPosition");
+        editor.remove("Device_ListView_TopPosition");
+        editor.commit();
     }
 }
