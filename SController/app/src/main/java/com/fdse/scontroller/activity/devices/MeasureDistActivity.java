@@ -28,9 +28,9 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
     private FrameLayout preview;
 
     private float angle;
+    private double azimuth;
 
-    private TextView mTvHeight, mTvDistance, mTvAngle,mInfomation;
-    private SeekBar mPbHeight; //滑动条
+    private TextView mTvDistance, mTvAzimuth,mTvAngle,mInfomation;
     private int progress = 175;//高度
 
     private int count;
@@ -100,10 +100,17 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
          *  roll：y轴和水平面的夹角，由于历史原因，范围为-90°至90°。
          *  当x轴向z轴移动时，角度为正值。
          */
+        azimuth = Math.toDegrees(sensorEvent.values[0]);
+        if (azimuth<0) {
+            azimuth=azimuth+360;
+        }
 
         angle = Math.abs(sensorEvent.values[1]);
-        if (count % 5 == 0)
+        if (count % 5 == 0){
+            mTvAzimuth.setText("设备所在的方位;"+ String.format(Locale.CHINA, "%.2f", azimuth));
             mTvAngle.setText("镜头角度：" + String.format(Locale.CHINA, "%.2f", angle));
+        }
+
 
         angle = (float) (progress * Math.tan(angle * Math.PI / 180));
         if (angle < 0) {
@@ -123,7 +130,6 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
     }
 
     private void getViews() {
-        mTvHeight = (TextView) findViewById(R.id.height);
         mTvDistance = (TextView) findViewById(R.id.distance);
         mTvAngle = (TextView) findViewById(R.id.angle);
         mInfomation=(TextView)findViewById(R.id.information);
