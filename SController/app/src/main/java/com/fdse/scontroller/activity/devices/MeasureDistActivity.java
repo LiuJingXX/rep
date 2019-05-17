@@ -12,11 +12,14 @@ import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+
 import com.fdse.scontroller.R;
 import com.fdse.scontroller.view.MySurfaceView;
 import com.zhy.autolayout.*;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class MeasureDistActivity extends AutoLayoutActivity implements SensorEventListener {
 
@@ -29,8 +32,9 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
 
     private float angle,distance;
     private double azimuth;
+    private double person_x, person_y, device_x, device_y;//摄像机（人）、设备的x,y坐标
 
-    private TextView mTvDistance, mTvAzimuth,mTvAngle,mInfomation;
+    private TextView mTvDistance, mTvAzimuth, mTvAngle, mInfomation, mDevLocation;
     private int progress = 175;//高度
 
     private int count;
@@ -101,7 +105,11 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
         azimuth = sensorEvent.values[0];
         angle = Math.abs(sensorEvent.values[1]);
         if (count % 5 == 0){
-            mTvAzimuth.setText("设备所在的方位:"+ String.format(Locale.CHINA, "%.2f", azimuth));
+            mInfomation.setText("请将十字对准设备在地面的投影");
+            Map<String,Double> map = CalculateXY(10.0,10.0,5,azimuth);
+            mDevLocation.setText("设备的坐标是：(" + map.get("x_location")+","+map.get("y_location")+")"+map.get("case"));
+            //mTvAzimuth.setText("设备所在的方位:"+ String.format(Locale.CHINA, "%.2f", azimuth));
+            mTvAzimuth.setText("设备所在的方位:"+ azimuth);
             mTvAngle.setText("镜头角度：" + String.format(Locale.CHINA, "%.2f", angle));
         }
         distance = (float) (progress * Math.tan(angle * Math.PI / 180));
@@ -110,11 +118,54 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
         }
         if (count % 5 == 0){
             mTvDistance.setText("与所测物体相距：" + String.format(Locale.CHINA, "%.2f", distance) + " cm");
-            mInfomation.setText("请将十字对准设备在地面的投影");
+
         }
 
         count++;
     }
+
+    public Map<String, Double> CalculateXY(double person_x,double person_y,float distance,double azimuth) {
+        Map<String, Double> map = new HashMap<String, Double>();
+        double device_x=0.0, device_y=0.0;
+        int direction = 0;
+        double flag_direction=0.0;
+        if (azimuth<=90)
+            direction = 1;
+        else if(90<azimuth && azimuth<=180)
+            direction = 2;
+        else if(180<azimuth && azimuth<=270)
+            direction = 3;
+        else if(270<azimuth && azimuth<=360)
+            direction =4;
+        switch(direction){
+            case 1 :
+                flag_direction = 1.0;
+                device_x = person_x + (Math.sin(azimuth * Math.PI /180))*distance;
+                device_y = person_y + (Math.cos(azimuth * Math.PI/180))*distance;
+                break;
+            case 2 :
+                flag_direction = 2.0;
+                device_x = person_x + (Math.sin(azimuth * Math.PI /180))*distance;
+                device_y = person_y + (Math.cos(azimuth * Math.PI/180))*distance;
+                break;
+            case 3 :
+                flag_direction = 3.0;
+                device_x = person_x + (Math.sin(azimuth * Math.PI /180))*distance;
+                device_y = person_y + (Math.cos(azimuth * Math.PI/180))*distance;
+                break;
+            case 4 :
+                flag_direction = 4.0;
+                device_x = person_x + (Math.sin(azimuth * Math.PI /180))*distance;
+                device_y = person_y + (Math.cos(azimuth * Math.PI/180))*distance;
+                break;
+
+        }
+        map.put("x_location", device_x);
+        map.put("y_location", device_y);
+        map.put("case",flag_direction);
+        return map;
+    }
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
@@ -126,6 +177,7 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
         mTvAzimuth = (TextView)findViewById(R.id.azimuth);
         mTvAngle = (TextView) findViewById(R.id.angle);
         mTvDistance = (TextView) findViewById(R.id.distance);
+        mDevLocation = (TextView)findViewById(R.id.deviceLocation);
 
     }
 
