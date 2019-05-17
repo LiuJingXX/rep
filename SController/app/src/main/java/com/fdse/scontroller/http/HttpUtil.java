@@ -3,6 +3,7 @@ package com.fdse.scontroller.http;
 import com.fdse.scontroller.util.Global;
 
 import java.io.File;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -96,19 +97,16 @@ public class HttpUtil {
         //构建请求体
         MultipartBody.Builder builder = new MultipartBody.Builder();
         builder.setType(MultipartBody.FORM);
-        if (maps == null) {
-            File file=new File(filePath);
-            builder.addFormDataPart("fileName", "filename212",
-                    RequestBody.create(MEDIA_TYPE_JPEG, file));
-        } else {
+        if (maps != null) {
             for (String key : maps.keySet()) {
                 builder.addFormDataPart(key, maps.get(key));
             }
-            File file=new File(filePath);
-            builder.addFormDataPart("fileName", "fileName",
-                    RequestBody.create(MEDIA_TYPE_JPEG, file));
-
         }
+        File file=new File(filePath);
+        String fileName= String.valueOf(System.currentTimeMillis());
+        fileName+=".jpg";
+        builder.addFormDataPart("fileName", fileName,
+                RequestBody.create(MEDIA_TYPE_JPEG, file));
 
         RequestBody body = builder.build();
 

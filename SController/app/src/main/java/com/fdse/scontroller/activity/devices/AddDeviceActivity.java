@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSONArray;
 import com.fdse.scontroller.R;
 import com.fdse.scontroller.activity.BaseActivity;
 import com.fdse.scontroller.adapter.HomeDeviceAdapter;
@@ -55,8 +56,6 @@ public class AddDeviceActivity extends BaseActivity {
     private Uri imageUri;
     private Uri cropImageUri;
     SharedPreferences preferences;
-    private List<HomeDevice> deviceList = new ArrayList<HomeDevice>();
-    private HomeDeviceAdapter homeDeviceAdapter;
     private ListView listView;
 
     @Override
@@ -64,17 +63,33 @@ public class AddDeviceActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_device);
         preferences = getSharedPreferences(Constant.PREFERENCES_USER_INFO, Activity.MODE_PRIVATE);
-        listView = (ListView) findViewById(R.id.list_view);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-        photo = (ImageView) findViewById(R.id.photo);
-        fab = (FloatingActionButton) findViewById(R.id.fab_camera);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                gotoCaptureCrop();
-            }
-        });
+        listView = findViewById(R.id.list_view_serach_devices);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        photo = findViewById(R.id.photo);
+        fab = findViewById(R.id.fab);
+        fab.setOnClickListener(view -> gotoCaptureCrop());
+        gotoCaptureCrop();
+        String responceData="{\n" +
+                "\"url\":\"www.baidu.com\",\n" +
+                "\"data\":[\n" +
+                "         {\n" +
+                "             \"商品名称\": \"罗技无线鼠标M170\",\n" +
+                "             \"商品编号\": \"2177845\",\n" +
+                "             \"产品类型\": \"便携鼠标\"\n" +
+                "           },\n" +
+                "         {\n" +
+                "           \"商品名称\": \"罗技无线鼠标M170\",\n" +
+                "           \"商品编号\": \"2177845\",\n" +
+                "           \"产品类型\": \"便携鼠标\"\n" +
+                "         }\n" +
+                "       ]\n" +
+                "}";
+        try {
+            showDeviceList(responceData);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     // 拍照 + 裁切
@@ -105,7 +120,7 @@ public class AddDeviceActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         int output_X = 480, output_Y = 480;
-        if (resultCode == RESULT_OK) {
+        if (true) {
             switch (requestCode) {
                 case CODE_CAMERA_REQUEST://拍照完成回调
                     cropImageUri = Uri.fromFile(fileCropUri);
@@ -152,6 +167,9 @@ public class AddDeviceActivity extends BaseActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 try {
                     String url = response.body().string();
+                    if(url.contains("url")){
+                        url=url.split("url = ")[1];
+                    }
                     getDeviceInfo(url);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -177,7 +195,7 @@ public class AddDeviceActivity extends BaseActivity {
                 try {
                     String responceData = response.body().string();
                     //设置数据
-                    getDeviceList(responceData);
+                    showDeviceList(responceData);
                 } catch (Exception e) {
                     e.printStackTrace();
                     showUploadFailed("设备信息解析失败");
@@ -187,25 +205,15 @@ public class AddDeviceActivity extends BaseActivity {
         });
     }
 
-    private void getDeviceList(String responceData) throws JSONException {
+    private void showDeviceList(String responceData) throws JSONException {
         JSONObject jsonObject = null;
         jsonObject = new JSONObject(responceData);
         String url = (String) jsonObject.get("url");
-        List<Object> list = (List<Object>) jsonObject.get("data");
+        JSONArray list = (JSONArray) jsonObject.get("data");
         for(int i = 0; i < list.size(); i++){
-            HomeDevice homeDevice1 =new HomeDevice(R.drawable.home_saodijiqiren,"扫地机器人","正在运行");
-            deviceList.add(homeDevice1);
+            JSONObject device= (JSONObject) list.get(i);
         }
-        //显示查询到的设备信息（列表）
-        showDeviceList();
     }
-
-    private void showDeviceList() throws JSONException {
-        homeDeviceAdapter = new HomeDeviceAdapter(this,
-                R.layout.item_home_deivce, deviceList);
-        listView.setAdapter(homeDeviceAdapter);
-    }
-
 
     private void showUploadFailed(String error) {
         Snackbar.make(fab, error, Snackbar.LENGTH_LONG)

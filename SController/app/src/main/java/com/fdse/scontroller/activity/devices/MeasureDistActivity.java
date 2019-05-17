@@ -39,9 +39,10 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_measure_distance);
         getViews();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        preview = (FrameLayout) findViewById(R.id.camera_preview);
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
@@ -63,10 +64,7 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
         }
         //必须放在onResume中，不然会出现Home键之后，再回到该APP，黑屏
         mySurfaceView = new MySurfaceView(getApplicationContext(), camera);
-
-        preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mySurfaceView);
-
         sensorManager.registerListener(this, gyroSensor, SensorManager.SENSOR_DELAY_UI); //为传感器注册监听器
     }
 

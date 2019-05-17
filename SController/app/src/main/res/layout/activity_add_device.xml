@@ -28,12 +28,18 @@
         android:layout_marginTop="10dp"
         android:background="@mipmap/ic_launcher_round" />
 
+    <ListView
+        android:id="@+id/list_view_serach_devices"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></ListView>
+
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_camera"
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:icon="@drawable/ic_camera" />
+        app:srcCompat="@drawable/ic_camera_alt_black_24dp"
+        tools:ignore="VectorDrawableCompat" />
 
 </android.support.design.widget.CoordinatorLayout>

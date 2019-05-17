@@ -80,11 +80,11 @@ public class UrlConstant {
     /**
      * 文件服务器
      */
-    public static final String FILE_IP = "172.20.10.2";//142,148
-    public static final String FILE_PORT = "8080";
+    public static final String FILE_IP = "10.141.221.88";//142,148
+    public static final String FILE_PORT = "12321";
 
     //上传设备发现裁剪图片
-    public static final String FILE_ADD_DEVICE_IMAGE= "file/addDeviceImage";
+    public static final String FILE_ADD_DEVICE_IMAGE= "/upload/uploadImage";
 
     public static String getFlieServiceURL(String  service) {
         String serviceURL = String.format("http://%s:%s/%s", FILE_IP, FILE_PORT, service);
