@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.fdse.scontroller.R;
 import com.fdse.scontroller.activity.devices.AddDeviceActivity;
+import com.fdse.scontroller.activity.devices.MeasureDistActivity;
 import com.fdse.scontroller.activity.devices.NewDeviceListFragment;
 import com.fdse.scontroller.adapter.HomeDeviceViewPagerAdapter;
 import com.fdse.scontroller.fragment.devicefragment.DeviceListFragment;
@@ -134,7 +135,8 @@ public class HomeFragment extends Fragment {
                                 startActivity(intent0);
                                 break;
                             case R.id.item_location:
-                                Toast.makeText(getActivity(), "设备定位",Toast.LENGTH_LONG).show();
+                                Intent intent1 = new Intent(getContext(),MeasureDistActivity.class);
+                                startActivity(intent1);
                                 break;
                             default:
                                 break;
