@@ -81,7 +81,7 @@
             android:background="@drawable/video_dialog_progress_bg"
             android:padding="16px"
             android:textColor="#ffffff"
-            tools:text="折备相对手机的方位:50°" />
+            tools:text="设备的方位：" />
 
         <TextView
             android:id="@+id/angle"

@@ -27,7 +27,7 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
     private Sensor gyroSensor = null;//陀螺仪
     private FrameLayout preview;
 
-    private float angle;
+    private float angle,distance;
     private double azimuth;
 
     private TextView mTvDistance, mTvAzimuth,mTvAngle,mInfomation;
@@ -98,24 +98,18 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
          *  roll：y轴和水平面的夹角，由于历史原因，范围为-90°至90°。
          *  当x轴向z轴移动时，角度为正值。
          */
-        azimuth = Math.toDegrees(sensorEvent.values[0]);
-        if (azimuth<0) {
-            azimuth=azimuth+360;
-        }
-
+        azimuth = sensorEvent.values[0];
         angle = Math.abs(sensorEvent.values[1]);
         if (count % 5 == 0){
-            mTvAzimuth.setText("设备所在的方位;"+ String.format(Locale.CHINA, "%.2f", azimuth));
+            mTvAzimuth.setText("设备所在的方位:"+ String.format(Locale.CHINA, "%.2f", azimuth));
             mTvAngle.setText("镜头角度：" + String.format(Locale.CHINA, "%.2f", angle));
         }
-
-
-        angle = (float) (progress * Math.tan(angle * Math.PI / 180));
-        if (angle < 0) {
-            angle = -angle;
+        distance = (float) (progress * Math.tan(angle * Math.PI / 180));
+        if (distance < 0) {
+            distance = -distance;
         }
         if (count % 5 == 0){
-            mTvDistance.setText("与所测物体相距：" + String.format(Locale.CHINA, "%.2f", angle) + " cm");
+            mTvDistance.setText("与所测物体相距：" + String.format(Locale.CHINA, "%.2f", distance) + " cm");
             mInfomation.setText("请将十字对准设备在地面的投影");
         }
 
@@ -128,9 +122,10 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
     }
 
     private void getViews() {
-        mTvDistance = (TextView) findViewById(R.id.distance);
+        mInfomation = (TextView)findViewById(R.id.information);
+        mTvAzimuth = (TextView)findViewById(R.id.azimuth);
         mTvAngle = (TextView) findViewById(R.id.angle);
-        mInfomation=(TextView)findViewById(R.id.information);
+        mTvDistance = (TextView) findViewById(R.id.distance);
 
     }
 
