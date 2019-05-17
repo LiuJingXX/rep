@@ -27,10 +27,10 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
     private Sensor gyroSensor = null;//陀螺仪
     private FrameLayout preview;
 
-    private float angle;
+    private float angle,distance;
+    private double azimuth;
 
-    private TextView mTvHeight, mTvDistance, mTvAngle,mInfomation;
-    private SeekBar mPbHeight; //滑动条
+    private TextView mTvDistance, mTvAzimuth,mTvAngle,mInfomation;
     private int progress = 175;//高度
 
     private int count;
@@ -39,9 +39,10 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_measure_distance);
         getViews();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        preview = (FrameLayout) findViewById(R.id.camera_preview);
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
@@ -63,10 +64,7 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
         }
         //必须放在onResume中，不然会出现Home键之后，再回到该APP，黑屏
         mySurfaceView = new MySurfaceView(getApplicationContext(), camera);
-
-        preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mySurfaceView);
-
         sensorManager.registerListener(this, gyroSensor, SensorManager.SENSOR_DELAY_UI); //为传感器注册监听器
     }
 
@@ -100,17 +98,18 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
          *  roll：y轴和水平面的夹角，由于历史原因，范围为-90°至90°。
          *  当x轴向z轴移动时，角度为正值。
          */
-
+        azimuth = sensorEvent.values[0];
         angle = Math.abs(sensorEvent.values[1]);
-        if (count % 5 == 0)
+        if (count % 5 == 0){
+            mTvAzimuth.setText("设备所在的方位:"+ String.format(Locale.CHINA, "%.2f", azimuth));
             mTvAngle.setText("镜头角度：" + String.format(Locale.CHINA, "%.2f", angle));
-
-        angle = (float) (progress * Math.tan(angle * Math.PI / 180));
-        if (angle < 0) {
-            angle = -angle;
+        }
+        distance = (float) (progress * Math.tan(angle * Math.PI / 180));
+        if (distance < 0) {
+            distance = -distance;
         }
         if (count % 5 == 0){
-            mTvDistance.setText("与所测物体相距：" + String.format(Locale.CHINA, "%.2f", angle) + " cm");
+            mTvDistance.setText("与所测物体相距：" + String.format(Locale.CHINA, "%.2f", distance) + " cm");
             mInfomation.setText("请将十字对准设备在地面的投影");
         }
 
@@ -123,10 +122,10 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
     }
 
     private void getViews() {
-        mTvHeight = (TextView) findViewById(R.id.height);
-        mTvDistance = (TextView) findViewById(R.id.distance);
+        mInfomation = (TextView)findViewById(R.id.information);
+        mTvAzimuth = (TextView)findViewById(R.id.azimuth);
         mTvAngle = (TextView) findViewById(R.id.angle);
-        mInfomation=(TextView)findViewById(R.id.information);
+        mTvDistance = (TextView) findViewById(R.id.distance);
 
     }
 

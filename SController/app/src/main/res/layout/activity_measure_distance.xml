@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -61,15 +63,25 @@
         </FrameLayout>
 
         <TextView
-            android:id="@+id/distance"
+            android:id="@+id/information"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|bottom"
-            android:layout_marginBottom="100px"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_margin="180px"
             android:background="@drawable/video_dialog_progress_bg"
             android:padding="16px"
             android:textColor="#ffffff"
-            tools:text="与所测物体相距：5m" />
+            tools:text="请将十字对准设备在地面的投影" />
+        <TextView
+            android:id="@+id/azimuth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_margin="260px"
+            android:background="@drawable/video_dialog_progress_bg"
+            android:padding="16px"
+            android:textColor="#ffffff"
+            tools:text="设备的方位：" />
 
         <TextView
             android:id="@+id/angle"
@@ -80,17 +92,21 @@
             android:background="@drawable/video_dialog_progress_bg"
             android:padding="16px"
             android:textColor="#ffffff"
-            tools:text="镜头角度：30°" />
+            tools:text="镜头角度：30°"
+            tools:visibility="visible" />
+
         <TextView
-            android:id="@+id/information"
+            android:id="@+id/distance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|top"
-            android:layout_margin="180px"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="100px"
             android:background="@drawable/video_dialog_progress_bg"
             android:padding="16px"
             android:textColor="#ffffff"
-            tools:text="请将十字对准设备在地面的投影" />
+            tools:text="与所测物体相距：5m" />
+
+
 
     </FrameLayout>
 </android.support.constraint.ConstraintLayout>

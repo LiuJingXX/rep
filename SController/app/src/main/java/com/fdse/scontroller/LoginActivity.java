@@ -121,12 +121,13 @@ public class LoginActivity extends FragmentActivity {
         }
     }
 
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        //调用mqtt
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //调用mqtt
 //        EventBus.getDefault().register(this);
-//    }
+        progressDialog.dismiss();
+    }
 //
 //    @Subscribe(threadMode = ThreadMode.MAIN)
 //    public void getMqttMessage3(MQTTMessage mqttMessage){
