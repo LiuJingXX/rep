@@ -29,13 +29,17 @@ public class NewDeviceDetailActivity extends AppCompatActivity {
         initView();
         Intent intent = getIntent();
         int position = intent.getIntExtra("position",0);
+        String device_name = intent.getStringExtra("device_name");
+        String device_state = intent.getStringExtra("device_state");
+        String device_detail = intent.getStringExtra("device_detail");
 
-        mTextView.setText("You click item:"+position);
+        mTextView.setText("device_detail:"+device_detail);
 
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Toast.makeText(NewDeviceDetailActivity.this,"To be continue...",Toast.LENGTH_SHORT).show();
+                // 返回主界面
+                // Toast.makeText(NewDeviceDetailActivity.this,"To be continue...",Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(NewDeviceDetailActivity.this, MainActivity.class);
                 intent.putExtra("fragment_id",0);
                 startActivity(intent);
