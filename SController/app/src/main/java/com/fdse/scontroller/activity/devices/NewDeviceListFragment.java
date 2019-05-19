@@ -15,7 +15,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fdse.scontroller.R;
 import com.fdse.scontroller.adapter.HomeDeviceAdapter;
@@ -51,8 +50,13 @@ public class NewDeviceListFragment extends Fragment  {
         listView = (ListView) view.findViewById(R.id.list_view);
         swipeRefreshView = (SwipeRefreshLayout) view.findViewById(R.id.swipe_home_device);
 
+        // 设置SharedPreference，保存列表当前位置
         sp=getActivity().getPreferences(MODE_PRIVATE);
         editor=sp.edit();
+    }
+
+    private boolean is_urlDevice(String state){
+        return (state.indexOf("http") == 0);
     }
 
     private void setListener(){
@@ -63,18 +67,27 @@ public class NewDeviceListFragment extends Fragment  {
                 final TextView device_name = (TextView)view.findViewById(R.id.tv_home_device_name);
                 final TextView device_sate = (TextView)view.findViewById(R.id.tv_home_device_sate);
 
+                String deviceName = device_name.getText().toString();
+                String deviceState = device_sate.getText().toString();
                 Intent intent = new Intent(getActivity(), NewDeviceDetailActivity.class);
-                intent.putExtra("device_name",device_name.getText().toString());
-                intent.putExtra("device_sate", device_sate.getText().toString());
+                intent.putExtra("device_name",deviceName);
+                intent.putExtra("device_state", deviceState);
 
                 try{
+                    // 获取当前点击的设备信息，跳过没有entity的部分
                     JSONArray jarr = new JSONArray(deviceList);
                     JSONObject result = jarr.getJSONObject(position);
                     intent.putExtra("device_detail", result.toString());
 
                     // 获取特殊设备，通过url跳转到第三方页面
                     String entity_id= result.getString("entity_id");
-                    intent.putExtra("layout","webview");
+                    if(is_urlDevice(deviceState)){
+                        intent.putExtra("layout","webview");
+                        intent.putExtra("url", deviceState);
+                    }else{
+                        intent.putExtra("layout","none_webview");
+                    }
+
                 }catch(JSONException e){
                     e.printStackTrace();
                 }
@@ -109,13 +122,11 @@ public class NewDeviceListFragment extends Fragment  {
         final String TAG = "[initHomeDevice]";
 
         getDeviceList();
-        try{
-            Thread.sleep(1200);
-        }catch (InterruptedException e){
-            e.printStackTrace();
-        }
 
         try {
+            while (deviceList==null || deviceList.isEmpty()){
+                Thread.sleep(500);
+            }
             JSONArray jsonArray = new JSONArray(deviceList);
 
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -123,13 +134,14 @@ public class NewDeviceListFragment extends Fragment  {
                 String attributes = result.getString("attributes");
                 String entity_id = result.getString("entity_id");
                 String state = result.getString("state");
-                String friendly_name = "";
+                String friendly_name;
                 try {
                     JSONObject jobj = new JSONObject(attributes);
                     friendly_name = jobj.getString("friendly_name");
                 } catch (JSONException e) {
                     Log.d(TAG, "Device No Friendly Name:" + entity_id);
-                    continue;
+                    //continue;
+                    friendly_name = "";
                 }
 //                        Log.d(TAG, "getDeviceList: friendly_name="+friendly_name);
 //                        Log.d(TAG, "getDeviceList: state="+state);
@@ -137,6 +149,8 @@ public class NewDeviceListFragment extends Fragment  {
 
             }
         }catch (JSONException e){
+            e.printStackTrace();
+        }catch (InterruptedException e){
             e.printStackTrace();
         }
 
