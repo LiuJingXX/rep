@@ -6,17 +6,22 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.TranslateAnimation;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.fdse.scontroller.R;
 import com.fdse.scontroller.view.MySurfaceView;
 import com.zhy.autolayout.*;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -34,8 +39,8 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
     private double azimuth;
     private double person_x, person_y, device_x, device_y;//摄像机（人）、设备的x,y坐标
 
-    private TextView mTvDistance, mTvAzimuth, mTvAngle, mInfomation, mDevLocation;
-    private int progress = 175;//高度
+    private TextView mTvDistance, mTvAzimuth, mTvAngle, mInfomation, mTgtLocation,mDevLocation;
+    private double progress = 175.0;//高度
 
     private int count;
 
@@ -104,23 +109,27 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
          */
         azimuth = sensorEvent.values[0];
         angle = Math.abs(sensorEvent.values[1]);
+        Map<String,Double> map = CalculateXY(10.0,10.0,5,azimuth);
         if (count % 5 == 0){
             mInfomation.setText("请将十字对准设备在地面的投影");
-            Map<String,Double> map = CalculateXY(10.0,10.0,5,azimuth);
-            mDevLocation.setText("设备的坐标是：(" + map.get("x_location")+","+map.get("y_location")+")"+map.get("case"));
+            mTgtLocation.setText("当前十字的坐标是：(" + map.get("x_location")+","+map.get("y_location")+")");
             //mTvAzimuth.setText("设备所在的方位:"+ String.format(Locale.CHINA, "%.2f", azimuth));
-            mTvAzimuth.setText("设备所在的方位:"+ azimuth);
-            mTvAngle.setText("镜头角度：" + String.format(Locale.CHINA, "%.2f", angle));
+           // mTvAzimuth.setText("设备所在的方位:"+ azimuth);
+           // mTvAngle.setText("镜头角度：" + String.format(Locale.CHINA, "%.2f", angle));
+            mTvDistance.setText("与所测物体相距：" + String.format(Locale.CHINA, "%.2f", distance) + " cm");
         }
         distance = (float) (progress * Math.tan(angle * Math.PI / 180));
         if (distance < 0) {
             distance = -distance;
         }
-        if (count % 5 == 0){
-            mTvDistance.setText("与所测物体相距：" + String.format(Locale.CHINA, "%.2f", distance) + " cm");
 
-        }
-
+        Button button = (Button)findViewById(R.id.button_confim);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDevLocation.setText("设备的坐标是：(" + map.get("x_location")+","+map.get("y_location")+")");
+            }
+        });
         count++;
     }
 
@@ -159,10 +168,15 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
                 device_y = person_y + (Math.cos(azimuth * Math.PI/180))*distance;
                 break;
 
+
         }
-        map.put("x_location", device_x);
-        map.put("y_location", device_y);
-        map.put("case",flag_direction);
+        double value1 = new BigDecimal(device_x).setScale(2,BigDecimal.ROUND_DOWN).doubleValue();//直接舍弃小数，保留两位
+        double value2 = new BigDecimal(device_y).setScale(2,BigDecimal.ROUND_DOWN).doubleValue();
+        //DecimalFormat df = new DecimalFormat("#.00");
+        //df.format(device_x);//返回string
+        map.put("x_location",value1);
+        map.put("y_location",value2);
+        //map.put("case",flag_direction);
         return map;
     }
 
@@ -174,10 +188,11 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
 
     private void getViews() {
         mInfomation = (TextView)findViewById(R.id.information);
-        mTvAzimuth = (TextView)findViewById(R.id.azimuth);
-        mTvAngle = (TextView) findViewById(R.id.angle);
+        mTgtLocation = (TextView)findViewById(R.id.deviceLocation);
+        mDevLocation = (TextView)findViewById(R.id.confirm_text);
+//        mTvAzimuth = (TextView)findViewById(R.id.azimuth);//设备方位textview
+//        mTvAngle = (TextView) findViewById(R.id.angle);//手机角度textview
         mTvDistance = (TextView) findViewById(R.id.distance);
-        mDevLocation = (TextView)findViewById(R.id.deviceLocation);
 
     }
 
