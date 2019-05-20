@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.TranslateAnimation;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
@@ -17,14 +18,20 @@ import android.widget.Toast;
 
 
 import com.fdse.scontroller.R;
+import com.fdse.scontroller.constant.UrlConstant;
+import com.fdse.scontroller.http.HttpUtil;
 import com.fdse.scontroller.view.MySurfaceView;
 import com.zhy.autolayout.*;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 public class MeasureDistActivity extends AutoLayoutActivity implements SensorEventListener {
 
@@ -128,9 +135,39 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
             @Override
             public void onClick(View view) {
                 mDevLocation.setText("设备的坐标是：(" + map.get("x_location")+","+map.get("y_location")+")");
+                saveDeviceLocation(1,map.get("x_location"),map.get("y_location"));
             }
         });
         count++;
+    }
+
+    private void saveDeviceLocation(int id, Double x_location, Double y_location){
+        final HashMap<String, String> postData = new HashMap<String, String>();
+        String serviceURL = UrlConstant.getAppBackEndServiceURL(UrlConstant.APP_BACK_END_DEVICE_SAVE_DEVICE_LOCATION);
+        postData.put("id", String.valueOf(id));
+        postData.put("x", String.valueOf(x_location));
+        postData.put("y", String.valueOf(y_location));
+        HttpUtil.doPost(serviceURL, postData, new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                //Toast.makeText(MeasureDistActivity.this,"添加设备定位信息失败",Toast.LENGTH_SHORT).show();
+                myToast("添加设备定位信息失败");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                //Toast.makeText(MeasureDistActivity.this,"添加设备定位信息成功",Toast.LENGTH_SHORT).show();
+                myToast("添加设备定位信息成功");
+//                try {
+//                    String responceData = response.body().string();
+//                    //设置数据
+//                    showDeviceList(responceData);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    showUploadFailed("设备信息解析失败");
+//                }
+            }
+        });
     }
 
     public Map<String, Double> CalculateXY(double person_x,double person_y,float distance,double azimuth) {
@@ -194,6 +231,14 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
 //        mTvAngle = (TextView) findViewById(R.id.angle);//手机角度textview
         mTvDistance = (TextView) findViewById(R.id.distance);
 
+    }
+    private void myToast(String mystring) {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MeasureDistActivity.this,mystring,Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }
