@@ -13,7 +13,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!-- 精确的位置权限 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -66,20 +65,16 @@
         <activity
             android:name=".activity.devices.AddDeviceActivity"
             android:label="@string/title_activity_add_device"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.devices.MeasureDistActivity"
             android:label="设备测距"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
-
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".activity.devices.NewDeviceDetailActivity"
             android:label="@string/title_activity_new_device_detail"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.fdse.scontroller.fileprovider"
@@ -88,13 +83,14 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
-
         </provider>
 
-        <meta-data android:name="design_width" android:value="768">
-        </meta-data>
-        <meta-data android:name="design_height" android:value="1280">
-        </meta-data>
+        <meta-data
+            android:name="design_width"
+            android:value="768"></meta-data>
+        <meta-data
+            android:name="design_height"
+            android:value="1280"></meta-data>
     </application>
 
 </manifest>
