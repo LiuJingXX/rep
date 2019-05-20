@@ -77,10 +77,17 @@ public class AddDeviceActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_device);
+        initView();
         preferences = getSharedPreferences(Constant.PREFERENCES_USER_INFO, Activity.MODE_PRIVATE);
+        gotoCaptureCrop();
+    }
+
+    private void initView() {
         listView = findViewById(R.id.list_view_serach_devices);
         listView.setOnItemClickListener((adapterView, view, i, l) -> {
-            Toast.makeText(AddDeviceActivity.this, "第" + i + "行", Toast.LENGTH_LONG).show();
+            String info=listViewData[i];
+            saveDeviceInfo(info);
+            Toast.makeText(AddDeviceActivity.this, "第" + i + "行"+info, Toast.LENGTH_LONG).show();
         });
 //        Toolbar toolbar = findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
@@ -97,13 +104,6 @@ public class AddDeviceActivity extends BaseActivity {
         });
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> gotoCaptureCrop());
-        gotoCaptureCrop();
-
-//        try {
-//            showDeviceList(responceData);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
     }
 
     // 拍照 + 裁切
@@ -235,14 +235,43 @@ public class AddDeviceActivity extends BaseActivity {
         });
     }
 
+
+    private void searchDeviceInfo(String url) {
+        final HashMap<String, String> postData = new HashMap<String, String>();
+        String serviceURL = UrlConstant.getPailitaoServiceURL(UrlConstant.PAILITAO_GET_DEVICE_INFO);
+        postData.put("url", url);
+        HttpUtil.doPost(serviceURL, postData, new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                showUploadFailed("设备信息请求错误");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                showUploadFailed("正在查询设备信息，请稍等。");
+//                try {
+//                    String responceData = response.body().string();
+//                    //设置数据
+//                    showDeviceList(responceData);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    showUploadFailed("设备信息解析失败");
+//                }
+            }
+        });
+    }
+
     private void showDeviceInfo() {
+        //清空数据显示
+        listViewData = new String[0];
+        initAdapter();
+        if(currentImage<0){
+            return;
+        }
         //显示上面的图片
         String url = urlList.get(currentImage);
         new Thread(() -> showImages(getHttpBitmap(url))).start();
         //查找下面数据数据信息
-        //清空数据显示
-        listViewData = new String[0];
-        initAdapter();
         final HashMap<String, String> postData = new HashMap<String, String>();
         String serviceURL = UrlConstant.getPailitaoServiceURL(UrlConstant.PAILITAO_GET_DEVICE_INFO);
         postData.put("url", url);
@@ -254,7 +283,7 @@ public class AddDeviceActivity extends BaseActivity {
                         "\"url\":\"www.baidu.com\",\n" +
                         "\"data\":[\n" +
                         "         {\n" +
-                        "             \"商品名称\": \"罗技无线鼠标M171\",\n" +
+                        "             \"商品名称\": \"罗技无线鼠标M170\",\n" +
                         "             \"商品编号\": \"2177845\",\n" +
                         "             \"产品类型\": \"便携鼠标\"\n" +
                         "           },\n" +
@@ -264,7 +293,7 @@ public class AddDeviceActivity extends BaseActivity {
                         "             \"产品类型\": \"便携鼠标\"\n" +
                         "           },\n" +
                         "         {\n" +
-                        "             \"商品名称\": \"罗技无线鼠标M171\",\n" +
+                        "             \"商品名称\": \"罗技无线鼠标M172\",\n" +
                         "             \"商品编号\": \"2177845\",\n" +
                         "             \"产品类型\": \"便携鼠标\"\n" +
                         "           },\n" +
@@ -341,37 +370,32 @@ public class AddDeviceActivity extends BaseActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 try {
                     String responceData = response.body().string();
+                    responceData = "{\n" +
+                            "\"url\":\"www.baidu.com\",\n" +
+                            "\"data\":[\n" +
+                            "         {\n" +
+                            "             \"商品名称\": \"罗技无线鼠标M173\",\n" +
+                            "             \"商品编号\": \"2177845\",\n" +
+                            "             \"产品类型\": \"便携鼠标\"\n" +
+                            "           },\n" +
+                            "         {\n" +
+                            "             \"商品名称\": \"罗技无线鼠标M172\",\n" +
+                            "             \"商品编号\": \"2177845\",\n" +
+                            "             \"产品类型\": \"便携鼠标\"\n" +
+                            "           },\n" +
+                            "         {\n" +
+                            "             \"商品名称\": \"罗技无线鼠标M171\",\n" +
+                            "             \"商品编号\": \"2177845\",\n" +
+                            "             \"产品类型\": \"便携鼠标\"\n" +
+                            "           }\n" +
+                            "       ]\n" +
+                            "}";
                     //设置数据
                     showDeviceList(responceData);
                 } catch (Exception e) {
                     e.printStackTrace();
                     showUploadFailed("设备信息解析失败");
                 }
-            }
-        });
-    }
-
-    private void searchDeviceInfo(String url) {
-        final HashMap<String, String> postData = new HashMap<String, String>();
-        String serviceURL = UrlConstant.getPailitaoServiceURL(UrlConstant.PAILITAO_GET_DEVICE_INFO);
-        postData.put("url", url);
-        HttpUtil.doPost(serviceURL, postData, new okhttp3.Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                showUploadFailed("设备信息请求错误");
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                showUploadFailed("正在查询设备信息，请稍等。");
-//                try {
-//                    String responceData = response.body().string();
-//                    //设置数据
-//                    showDeviceList(responceData);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    showUploadFailed("设备信息解析失败");
-//                }
             }
         });
     }
@@ -400,6 +424,37 @@ public class AddDeviceActivity extends BaseActivity {
             }
         });
     }
+
+
+    private void saveDeviceInfo(String info) {
+        final HashMap<String, String> postData = new HashMap<String, String>();
+        String serviceURL = UrlConstant.getAppBackEndServiceURL(UrlConstant.APP_BACK_END_DEVICE_SAVE_DEVICE_INFO);
+        postData.put("url", urlList.get(currentImage));
+        postData.put("deviceInfo", info);
+        urlList.remove(currentImage);
+        currentImage=urlList.size()-1;
+        showDeviceInfo();
+        HttpUtil.doPost(serviceURL, postData, new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                showUploadFailed("保存设备信息出错");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                showUploadFailed("保存设备信息成功");
+//                try {
+//                    String responceData = response.body().string();
+//                    //设置数据
+//                    showDeviceList(responceData);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    showUploadFailed("设备信息解析失败");
+//                }
+            }
+        });
+    }
+
 
     private void showUploadFailed(String error) {
         Snackbar.make(fab, error, Snackbar.LENGTH_LONG)

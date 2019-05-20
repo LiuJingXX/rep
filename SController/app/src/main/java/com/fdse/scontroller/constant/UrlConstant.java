@@ -15,8 +15,10 @@ public class UrlConstant {
     /**
      * App后端url
      */
-    public static final String APP_BACK_END_IP = "fudanse.club";
-    public static final String APP_BACK_END_PORT = "80/sc";
+    public static final String APP_BACK_END_IP = "192.168.1.109";
+    public static final String APP_BACK_END_PORT = "8080";
+//    public static final String APP_BACK_END_IP = "fudanse.club";
+//    public static final String APP_BACK_END_PORT = "80/sc";
 
     //用户登录1
     public static final String APP_BACK_END_USER_LOGIN_SERVICE = "user/login";
@@ -38,6 +40,8 @@ public class UrlConstant {
     //获取所有任务列表
     public static final String APP_BACK_END_TASKS_GET_ONGOING_TASKS= "task/getOngoingTasks";
 
+    //获取所有任务列表
+    public static final String APP_BACK_END_DEVICE_SAVE_DEVICE_INFO= "device/saveDeivce";
 
     public static String getAppBackEndServiceURL(String  service) {
         String serviceURL = String.format("http://%s:%s/%s", APP_BACK_END_IP, APP_BACK_END_PORT, service);
