@@ -15,7 +15,9 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.fdse.scontroller.MainActivity;
 import com.fdse.scontroller.R;
 import com.fdse.scontroller.adapter.HomeDeviceAdapter;
 import com.fdse.scontroller.http.HttpUtil;
@@ -120,13 +122,19 @@ public class NewDeviceListFragment extends Fragment  {
     }
     private void initHomeDevice(){
         final String TAG = "[initHomeDevice]";
-
         getDeviceList();
 
         try {
-            while (deviceList==null || deviceList.isEmpty()){
+            int count_i = 0;
+            while (count_i<4&&(deviceList==null || deviceList.isEmpty())){
+                count_i++;
                 Thread.sleep(500);
             }
+            if(deviceList==null || deviceList.isEmpty()){
+                Toast.makeText(getActivity(),"Failed to connect HASS",Toast.LENGTH_SHORT).show();
+                throw new InterruptedException("Failed to connect to HASS");
+            }
+
             JSONArray jsonArray = new JSONArray(deviceList);
 
             for (int i = 0; i < jsonArray.length(); i++) {
