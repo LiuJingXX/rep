@@ -43,6 +43,9 @@ public class UrlConstant {
     //获取所有任务列表
     public static final String APP_BACK_END_DEVICE_SAVE_DEVICE_INFO= "device/saveDeivce";
 
+    public static final String APP_BACK_END_DEVICE_SAVE_DEVICE_LOCATION= "device/saveDeivceLocation";
+
+
     public static String getAppBackEndServiceURL(String  service) {
         String serviceURL = String.format("http://%s:%s/%s", APP_BACK_END_IP, APP_BACK_END_PORT, service);
         return serviceURL;
