@@ -87,7 +87,7 @@ public class AddDeviceActivity extends BaseActivity {
         listView.setOnItemClickListener((adapterView, view, i, l) -> {
             String info=listViewData[i];
             saveDeviceInfo(info);
-            Toast.makeText(AddDeviceActivity.this, "第" + i + "行"+info, Toast.LENGTH_LONG).show();
+//            Toast.makeText(AddDeviceActivity.this, "第" + i + "行"+info, Toast.LENGTH_LONG).show();
         });
 //        Toolbar toolbar = findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
@@ -238,7 +238,7 @@ public class AddDeviceActivity extends BaseActivity {
 
     private void searchDeviceInfo(String url) {
         final HashMap<String, String> postData = new HashMap<String, String>();
-        String serviceURL = UrlConstant.getPailitaoServiceURL(UrlConstant.PAILITAO_GET_DEVICE_INFO);
+        String serviceURL = UrlConstant.getPailitaoServiceURL(UrlConstant.PAILITAO_SEARCH_DEVICE_INFO);
         postData.put("url", url);
         HttpUtil.doPost(serviceURL, postData, new okhttp3.Callback() {
             @Override
@@ -283,79 +283,19 @@ public class AddDeviceActivity extends BaseActivity {
                         "\"url\":\"www.baidu.com\",\n" +
                         "\"data\":[\n" +
                         "         {\n" +
-                        "             \"商品名称\": \"罗技无线鼠标M170\",\n" +
-                        "             \"商品编号\": \"2177845\",\n" +
-                        "             \"产品类型\": \"便携鼠标\"\n" +
+                        "             \"商品类别\": \"办公鼠标\",\n" +
+                        "             \"商品品牌\": \"罗技（Logitech）\",\n" +
+                        "             \"商品型号\": \"罗技M185\"\n" +
                         "           },\n" +
                         "         {\n" +
-                        "             \"商品名称\": \"罗技无线鼠标M171\",\n" +
-                        "             \"商品编号\": \"2177845\",\n" +
-                        "             \"产品类型\": \"便携鼠标\"\n" +
+                        "             \"商品类别\": \"办公鼠标\",\n" +
+                        "             \"商品品牌\": \"罗技（Logitech）\",\n" +
+                        "             \"商品型号\": \"罗技m186灰黑色\"\n" +
                         "           },\n" +
                         "         {\n" +
-                        "             \"商品名称\": \"罗技无线鼠标M172\",\n" +
-                        "             \"商品编号\": \"2177845\",\n" +
-                        "             \"产品类型\": \"便携鼠标\"\n" +
-                        "           },\n" +
-                        "         {\n" +
-                        "             \"商品名称\": \"罗技无线鼠标M171\",\n" +
-                        "             \"商品编号\": \"2177845\",\n" +
-                        "             \"产品类型\": \"便携鼠标\"\n" +
-                        "           },\n" +
-                        "         {\n" +
-                        "             \"商品名称\": \"罗技无线鼠标M171\",\n" +
-                        "             \"商品编号\": \"2177845\",\n" +
-                        "             \"产品类型\": \"便携鼠标\"\n" +
-                        "           },\n" +
-                        "         {\n" +
-                        "             \"商品名称\": \"罗技无线鼠标M171\",\n" +
-                        "             \"商品编号\": \"2177845\",\n" +
-                        "             \"产品类型\": \"便携鼠标\"\n" +
-                        "           },\n" +
-                        "         {\n" +
-                        "             \"商品名称\": \"罗技无线鼠标M171\",\n" +
-                        "             \"商品编号\": \"2177845\",\n" +
-                        "             \"产品类型\": \"便携鼠标\"\n" +
-                        "           },\n" +
-                        "         {\n" +
-                        "             \"商品名称\": \"罗技无线鼠标M171\",\n" +
-                        "             \"商品编号\": \"2177845\",\n" +
-                        "             \"产品类型\": \"便携鼠标\"\n" +
-                        "           },\n" +
-                        "         {\n" +
-                        "             \"商品名称\": \"罗技无线鼠标M171\",\n" +
-                        "             \"商品编号\": \"2177845\",\n" +
-                        "             \"产品类型\": \"便携鼠标\"\n" +
-                        "           },\n" +
-                        "         {\n" +
-                        "             \"商品名称\": \"罗技无线鼠标M171\",\n" +
-                        "             \"商品编号\": \"2177845\",\n" +
-                        "             \"产品类型\": \"便携鼠标\"\n" +
-                        "           },\n" +
-                        "         {\n" +
-                        "             \"商品名称\": \"罗技无线鼠标M171\",\n" +
-                        "             \"商品编号\": \"2177845\",\n" +
-                        "             \"产品类型\": \"便携鼠标\"\n" +
-                        "           },\n" +
-                        "         {\n" +
-                        "             \"商品名称\": \"罗技无线鼠标M171\",\n" +
-                        "             \"商品编号\": \"2177845\",\n" +
-                        "             \"产品类型\": \"便携鼠标\"\n" +
-                        "           },\n" +
-                        "         {\n" +
-                        "             \"商品名称\": \"罗技无线鼠标M171\",\n" +
-                        "             \"商品编号\": \"2177845\",\n" +
-                        "             \"产品类型\": \"便携鼠标\"\n" +
-                        "           },\n" +
-                        "         {\n" +
-                        "             \"商品名称\": \"罗技无线鼠标M171\",\n" +
-                        "             \"商品编号\": \"2177845\",\n" +
-                        "             \"产品类型\": \"便携鼠标\"\n" +
-                        "           },\n" +
-                        "         {\n" +
-                        "           \"商品名称\": \"罗技无线鼠标M172\",\n" +
-                        "           \"商品编号\": \"2177845\",\n" +
-                        "           \"产品类型\": \"便携鼠标\"\n" +
+                        "             \"商品类别\": \"办公鼠标\",\n" +
+                        "             \"商品品牌\": \"罗技（Logitech）\",\n" +
+                        "             \"商品型号\": \"罗技B175\"\n" +
                         "         }\n" +
                         "       ]\n" +
                         "}";
@@ -370,26 +310,6 @@ public class AddDeviceActivity extends BaseActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 try {
                     String responceData = response.body().string();
-                    responceData = "{\n" +
-                            "\"url\":\"www.baidu.com\",\n" +
-                            "\"data\":[\n" +
-                            "         {\n" +
-                            "             \"商品名称\": \"罗技无线鼠标M173\",\n" +
-                            "             \"商品编号\": \"2177845\",\n" +
-                            "             \"产品类型\": \"便携鼠标\"\n" +
-                            "           },\n" +
-                            "         {\n" +
-                            "             \"商品名称\": \"罗技无线鼠标M172\",\n" +
-                            "             \"商品编号\": \"2177845\",\n" +
-                            "             \"产品类型\": \"便携鼠标\"\n" +
-                            "           },\n" +
-                            "         {\n" +
-                            "             \"商品名称\": \"罗技无线鼠标M171\",\n" +
-                            "             \"商品编号\": \"2177845\",\n" +
-                            "             \"产品类型\": \"便携鼠标\"\n" +
-                            "           }\n" +
-                            "       ]\n" +
-                            "}";
                     //设置数据
                     showDeviceList(responceData);
                 } catch (Exception e) {
@@ -404,11 +324,25 @@ public class AddDeviceActivity extends BaseActivity {
         JSONObject jsonObject = null;
         jsonObject = new JSONObject(responceData);
         String url = (String) jsonObject.get("url");
+        Object dataObject=jsonObject.get("data");
+        if("null".equals(dataObject)){
+            showUploadFailed("正在查询设备信息，请稍等");
+            return;
+        }
         JSONArray list = (JSONArray) jsonObject.get("data");
         listViewData = new String[list.length()];
         for (int i = 0; i < list.length(); i++) {
             JSONObject device = (JSONObject) list.get(i);
-            String deivceInfo = device.toString();
+//            String deivceInfo = device.toString();
+            String deivceInfo = "";
+            deivceInfo+="名称：";
+            deivceInfo+=device.get("名称");
+            deivceInfo+="\n";
+            deivceInfo+="品牌：";
+            deivceInfo+=device.get("品牌");
+            deivceInfo+="\n";
+            deivceInfo+="类别：";
+            deivceInfo+=device.get("类别");
             listViewData[i] = deivceInfo;
         }
         initAdapter();
@@ -443,6 +377,11 @@ public class AddDeviceActivity extends BaseActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 showUploadFailed("保存设备信息成功");
+                Intent intent = new Intent(AddDeviceActivity.this,NewDeviceManageActivity.class);
+                Bundle bundle=new Bundle();
+                bundle.putSerializable("url","21");
+                intent.putExtras(bundle);
+                startActivity(intent);
 //                try {
 //                    String responceData = response.body().string();
 //                    //设置数据

@@ -15,10 +15,10 @@ public class UrlConstant {
     /**
      * App后端url
      */
-    public static final String APP_BACK_END_IP = "192.168.1.109";
-    public static final String APP_BACK_END_PORT = "8080";
-//    public static final String APP_BACK_END_IP = "fudanse.club";
-//    public static final String APP_BACK_END_PORT = "80/sc";
+//    public static final String APP_BACK_END_IP = "192.168.1.109";
+//    public static final String APP_BACK_END_PORT = "8080";
+    public static final String APP_BACK_END_IP = "fudanse.club";
+    public static final String APP_BACK_END_PORT = "80/sc";
 
     //用户登录1
     public static final String APP_BACK_END_USER_LOGIN_SERVICE = "user/login";
@@ -101,8 +101,11 @@ public class UrlConstant {
     public static final String PAILITAO_IP = "10.141.221.88";//142,148
     public static final String PAILITAO_PORT = "10300";
 
+    //调用拍立淘查询设备信息
+    public static final String PAILITAO_SEARCH_DEVICE_INFO= "sensing/search_info_from_Web";
+
     //调用拍立淘获取设备信息
-    public static final String PAILITAO_GET_DEVICE_INFO= "sensing/get_info_from_Web";
+    public static final String PAILITAO_GET_DEVICE_INFO= "sensing/get_search_result";
 
     public static String getPailitaoServiceURL(String  service) {
         String serviceURL = String.format("http://%s:%s/%s", PAILITAO_IP, PAILITAO_PORT, service);
