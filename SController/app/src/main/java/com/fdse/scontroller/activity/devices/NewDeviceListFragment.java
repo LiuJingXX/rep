@@ -165,13 +165,14 @@ public class NewDeviceListFragment extends Fragment  {
     }
     private void getDeviceList(){
         // url = http://192.168.1.8:8123/api/states
+        // url = http://10.131.253.117:8123/api/states
         // -H Content-Type=application/json
         // -H X-HA-Access=123456
         // GET
         final String TAG = "[initHomeDevice]";
 
         HttpUtil httpUtil = new HttpUtil();
-        httpUtil.getHASSApiState("http://192.168.1.8:8123/api/states", "123456", new Callback() {
+        httpUtil.getHASSApiState("http://10.131.253.117:8123/api/states", "123456", new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.e(TAG, "onFailure: ", e);
