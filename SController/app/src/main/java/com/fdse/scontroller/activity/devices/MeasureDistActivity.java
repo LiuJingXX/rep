@@ -47,7 +47,7 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
     private double person_x, person_y, device_x, device_y;//摄像机（人）、设备的x,y坐标
 
     private TextView mTvDistance, mTvAzimuth, mTvAngle, mInfomation, mTgtLocation,mDevLocation;
-    private double progress = 175.0;//高度
+    private double progress = 175.0;//高度 todo
 
     private int count;
 
@@ -116,7 +116,7 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
          */
         azimuth = sensorEvent.values[0];
         angle = Math.abs(sensorEvent.values[1]);
-        Map<String,Double> map = CalculateXY(10.0,10.0,5,azimuth);
+
         if (count % 5 == 0){
             mInfomation.setText("请将十字对准设备在地面的投影");
             mTgtLocation.setText("当前十字的坐标是：(" + map.get("x_location")+","+map.get("y_location")+")");
@@ -129,7 +129,9 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
         if (distance < 0) {
             distance = -distance;
         }
-
+        //person_x = ??
+        //person_y = ??
+        Map<String,Double> map = CalculateXY(10.0,10.0,distance,azimuth);// todo 
         Button button = (Button)findViewById(R.id.button_confim);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
