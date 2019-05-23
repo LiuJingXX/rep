@@ -10,10 +10,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -47,6 +49,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -58,6 +61,7 @@ public class AddDeviceActivity extends BaseActivity {
     private ImageView photo;
     private ImageView previous;
     private ImageView next;
+    private SwipeRefreshLayout swipeRefreshView;
     private FloatingActionButton fab;
     private static final int CODE_GALLERY_REQUEST = 0xa0;
     private static final int CODE_CAMERA_REQUEST = 0xa1;
@@ -69,6 +73,7 @@ public class AddDeviceActivity extends BaseActivity {
     SharedPreferences preferences;
     private ListView listView;
     private String[] listViewData;
+    private JSONArray listDeviceData;
     private List<String> urlList = new ArrayList<>();
     private int currentImage;
     private ArrayAdapter<String> adapter;
@@ -77,16 +82,25 @@ public class AddDeviceActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_device);
-        initView();
         preferences = getSharedPreferences(Constant.PREFERENCES_USER_INFO, Activity.MODE_PRIVATE);
+        initView();
+        //设置下拉刷新
+        setSwipeRefresh();
         gotoCaptureCrop();
     }
 
     private void initView() {
         listView = findViewById(R.id.list_view_serach_devices);
         listView.setOnItemClickListener((adapterView, view, i, l) -> {
-            String info=listViewData[i];
-            saveDeviceInfo(info);
+//            String info=listViewData[i];
+            JSONObject device = null;
+            try {
+                device = (JSONObject) listDeviceData.get(i);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            String deivceInfo = device.toString();
+            saveDeviceInfo(deivceInfo);
 //            Toast.makeText(AddDeviceActivity.this, "第" + i + "行"+info, Toast.LENGTH_LONG).show();
         });
 //        Toolbar toolbar = findViewById(R.id.toolbar);
@@ -94,6 +108,17 @@ public class AddDeviceActivity extends BaseActivity {
         photo = findViewById(R.id.photo);
         previous = findViewById(R.id.previous_photo);
         next = findViewById(R.id.next_photo);
+        photo.setOnClickListener(v -> {
+            if(currentImage<0){
+                return;
+            }
+            if(currentImage==0){
+                photo.setImageResource(R.mipmap.ic_launcher);
+            }
+            urlList.remove(currentImage);
+            currentImage=urlList.size()-1;
+            showDeviceInfo();
+        });
         previous.setOnClickListener(v -> {
             currentImage-=1;
             showDeviceInfo();
@@ -266,6 +291,8 @@ public class AddDeviceActivity extends BaseActivity {
         listViewData = new String[0];
         initAdapter();
         if(currentImage<0){
+            swipeRefreshView.setRefreshing(false);
+            showUploadFailed("请添加设备照片");
             return;
         }
         //显示上面的图片
@@ -312,6 +339,7 @@ public class AddDeviceActivity extends BaseActivity {
                     String responceData = response.body().string();
                     //设置数据
                     showDeviceList(responceData);
+                    swipeRefreshView.setRefreshing(false);
                 } catch (Exception e) {
                     e.printStackTrace();
                     showUploadFailed("设备信息解析失败");
@@ -329,10 +357,10 @@ public class AddDeviceActivity extends BaseActivity {
             showUploadFailed("正在查询设备信息，请稍等");
             return;
         }
-        JSONArray list = (JSONArray) jsonObject.get("data");
-        listViewData = new String[list.length()];
-        for (int i = 0; i < list.length(); i++) {
-            JSONObject device = (JSONObject) list.get(i);
+        listDeviceData = (JSONArray) jsonObject.get("data");
+        listViewData = new String[listDeviceData.length()];
+        for (int i = 0; i < listDeviceData.length(); i++) {
+            JSONObject device = (JSONObject) listDeviceData.get(i);
 //            String deivceInfo = device.toString();
             String deivceInfo = "";
             deivceInfo+="名称：";
@@ -360,11 +388,11 @@ public class AddDeviceActivity extends BaseActivity {
     }
 
 
-    private void saveDeviceInfo(String info) {
+    private void saveDeviceInfo(String deivceInfo) {
         final HashMap<String, String> postData = new HashMap<String, String>();
         String serviceURL = UrlConstant.getAppBackEndServiceURL(UrlConstant.APP_BACK_END_DEVICE_SAVE_DEVICE_INFO);
         postData.put("url", urlList.get(currentImage));
-        postData.put("deviceInfo", info);
+        postData.put("deviceInfo", deivceInfo);
         urlList.remove(currentImage);
         currentImage=urlList.size()-1;
         showDeviceInfo();
@@ -408,4 +436,23 @@ public class AddDeviceActivity extends BaseActivity {
         return state.equals(Environment.MEDIA_MOUNTED);
     }
 
+    private void setSwipeRefresh(){
+        swipeRefreshView = (SwipeRefreshLayout) findViewById(R.id.swipe_add_device);
+        // 设置颜色属性的时候一定要注意是引用了资源文件还是直接设置16进制的颜色，因为都是int值容易搞混
+        // 设置下拉进度的背景颜色，默认就是白色的
+        swipeRefreshView.setProgressBackgroundColorSchemeResource(android.R.color.white);
+        // 设置下拉进度的主题颜色
+        swipeRefreshView.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimary, R.color.yellow);
+
+        // 下拉时触发SwipeRefreshLayout的下拉动画，动画完毕之后就会回调这个方法
+        swipeRefreshView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // 开始刷新，设置当前为刷新状态
+                //swipeRefreshLayout.setRefreshing(true);
+                showDeviceInfo();
+            }
+        });
+
+    }
 }
