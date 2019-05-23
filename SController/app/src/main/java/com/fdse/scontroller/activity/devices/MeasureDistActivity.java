@@ -47,7 +47,7 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
     private double person_x, person_y, device_x, device_y;//摄像机（人）、设备的x,y坐标
 
     private TextView mTvDistance, mTvAzimuth, mTvAngle, mInfomation, mTgtLocation,mDevLocation;
-    private double progress = 175.0;//高度 todo
+    private double progress = 175;//高度 todo result from UWB
 
     private int count;
 
@@ -129,9 +129,9 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
         if (distance < 0) {
             distance = -distance;
         }
-        //person_x = ??
-        //person_y = ??
-        Map<String,Double> map = CalculateXY(10.0,10.0,distance,azimuth);// todo 
+        //person_x = ?? result from UWB
+        //person_y = ?? result from UWB
+        Map<String,Double> map = CalculateXY(person_x,person_y,distance,azimuth);// todo 
         Button button = (Button)findViewById(R.id.button_confim);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
