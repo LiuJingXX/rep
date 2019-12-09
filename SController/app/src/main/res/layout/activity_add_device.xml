@@ -37,7 +37,7 @@
                 android:layout_height="80dp"
                 android:layout_marginTop="10dp"
                 android:layout_weight="1"
-                android:src="@drawable/ic_chevron_left_black_24dp"
+                 android:src="@drawable/ic_chevron_left_black_24dp"
                 android:visibility="invisible" />
 
             <ImageView
@@ -54,7 +54,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_weight="1"
                 android:background="@drawable/ic_chevron_right_black_24dp"
-                android:visibility="invisible" />
+                 android:visibility="invisible" />
 
         </LinearLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
@@ -65,6 +65,16 @@
         android:layout_height="match_parent"
         android:layout_marginTop="100dp"></ListView>
 
+
+    <Button
+        android:id="@+id/button_manual_add_device"
+        android:text="手动添加设备"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="300px"
+        android:padding="16px"
+        android:textColor="#ffffff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

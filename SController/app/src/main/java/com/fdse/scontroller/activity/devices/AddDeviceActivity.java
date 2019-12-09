@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -63,6 +64,7 @@ public class AddDeviceActivity extends BaseActivity {
     private ImageView next;
     private SwipeRefreshLayout swipeRefreshView;
     private FloatingActionButton fab;
+    private Button button_manual_add_device;
     private static final int CODE_GALLERY_REQUEST = 0xa0;
     private static final int CODE_CAMERA_REQUEST = 0xa1;
     private static final int CODE_RESULT_REQUEST = 0xa2;
@@ -109,26 +111,42 @@ public class AddDeviceActivity extends BaseActivity {
         previous = findViewById(R.id.previous_photo);
         next = findViewById(R.id.next_photo);
         photo.setOnClickListener(v -> {
-            if(currentImage<0){
+            if (currentImage < 0) {
                 return;
             }
-            if(currentImage==0){
+            if (currentImage == 0) {
                 photo.setImageResource(R.mipmap.ic_launcher);
             }
             urlList.remove(currentImage);
-            currentImage=urlList.size()-1;
+            currentImage = urlList.size() - 1;
             showDeviceInfo();
         });
         previous.setOnClickListener(v -> {
-            currentImage-=1;
+            currentImage -= 1;
             showDeviceInfo();
         });
         next.setOnClickListener(v -> {
-            currentImage+=1;
+            currentImage += 1;
             showDeviceInfo();
         });
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> gotoCaptureCrop());
+        button_manual_add_device = (Button) findViewById(R.id.button_manual_add_device);
+        button_manual_add_device.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AddDeviceActivity.this, ManualAddDeviceActivity.class);
+                Bundle bundle = new Bundle();
+                String url = urlList.get(currentImage);
+                urlList.remove(currentImage);
+                currentImage = urlList.size() - 1;
+                showDeviceInfo();
+                bundle.putSerializable("url", url);
+                intent.putExtras(bundle);
+                startActivity(intent);
+
+            }
+        });
     }
 
     // 拍照 + 裁切
@@ -213,15 +231,15 @@ public class AddDeviceActivity extends BaseActivity {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(currentImage==0){
+                if (currentImage == 0) {
                     previous.setVisibility(View.INVISIBLE);
-                }else {
+                } else {
                     previous.setVisibility(View.VISIBLE);
                 }
 
-                if(currentImage==(urlList.size()-1)){
+                if (currentImage == (urlList.size() - 1)) {
                     next.setVisibility(View.INVISIBLE);
-                }else {
+                } else {
                     next.setVisibility(View.VISIBLE);
                 }
                 photo.setImageBitmap(bitmap);
@@ -290,7 +308,7 @@ public class AddDeviceActivity extends BaseActivity {
         //清空数据显示
         listViewData = new String[0];
         initAdapter();
-        if(currentImage<0){
+        if (currentImage < 0) {
             swipeRefreshView.setRefreshing(false);
             showUploadFailed("请添加设备照片");
             return;
@@ -352,8 +370,8 @@ public class AddDeviceActivity extends BaseActivity {
         JSONObject jsonObject = null;
         jsonObject = new JSONObject(responceData);
         String url = (String) jsonObject.get("url");
-        Object dataObject=jsonObject.get("data");
-        if("null".equals(dataObject)){
+        Object dataObject = jsonObject.get("data");
+        if ("null".equals(dataObject)) {
             showUploadFailed("正在查询设备信息，请稍等");
             return;
         }
@@ -363,14 +381,14 @@ public class AddDeviceActivity extends BaseActivity {
             JSONObject device = (JSONObject) listDeviceData.get(i);
 //            String deivceInfo = device.toString();
             String deivceInfo = "";
-            deivceInfo+="名称：";
-            deivceInfo+=device.get("名称");
-            deivceInfo+="\n";
-            deivceInfo+="品牌：";
-            deivceInfo+=device.get("品牌");
-            deivceInfo+="\n";
-            deivceInfo+="类别：";
-            deivceInfo+=device.get("类别");
+            deivceInfo += "名称：";
+            deivceInfo += device.get("名称");
+            deivceInfo += "\n";
+            deivceInfo += "品牌：";
+            deivceInfo += device.get("品牌");
+            deivceInfo += "\n";
+            deivceInfo += "类别：";
+            deivceInfo += device.get("类别");
             listViewData[i] = deivceInfo;
         }
         initAdapter();
@@ -394,7 +412,7 @@ public class AddDeviceActivity extends BaseActivity {
         postData.put("url", urlList.get(currentImage));
         postData.put("deviceInfo", deivceInfo);
         urlList.remove(currentImage);
-        currentImage=urlList.size()-1;
+        currentImage = urlList.size() - 1;
         showDeviceInfo();
         HttpUtil.doPost(serviceURL, postData, new okhttp3.Callback() {
             @Override
@@ -405,9 +423,10 @@ public class AddDeviceActivity extends BaseActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 showUploadFailed("保存设备信息成功");
-                Intent intent = new Intent(AddDeviceActivity.this,NewDeviceManageActivity.class);
-                Bundle bundle=new Bundle();
-                bundle.putSerializable("url","21");
+                String responceData = response.body().string();
+                Intent intent = new Intent(AddDeviceActivity.this, NewDeviceManageActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("url", "21");
                 intent.putExtras(bundle);
                 startActivity(intent);
 //                try {
@@ -436,7 +455,7 @@ public class AddDeviceActivity extends BaseActivity {
         return state.equals(Environment.MEDIA_MOUNTED);
     }
 
-    private void setSwipeRefresh(){
+    private void setSwipeRefresh() {
         swipeRefreshView = (SwipeRefreshLayout) findViewById(R.id.swipe_add_device);
         // 设置颜色属性的时候一定要注意是引用了资源文件还是直接设置16进制的颜色，因为都是int值容易搞混
         // 设置下拉进度的背景颜色，默认就是白色的

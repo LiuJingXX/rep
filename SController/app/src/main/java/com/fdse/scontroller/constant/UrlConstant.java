@@ -15,10 +15,10 @@ public class UrlConstant {
     /**
      * App后端url
      */
-//    public static final String APP_BACK_END_IP = "192.168.1.160";
-//    public static final String APP_BACK_END_PORT = "8080";
-    public static final String APP_BACK_END_IP = "fudanse.club";
-    public static final String APP_BACK_END_PORT = "80/sc";
+    public static final String APP_BACK_END_IP = "192.168.1.105";
+    public static final String APP_BACK_END_PORT = "8080";
+//    public static final String APP_BACK_END_IP = "fudanse.club";
+//    public static final String APP_BACK_END_PORT = "80/sc";
 
     //用户登录1
     public static final String APP_BACK_END_USER_LOGIN_SERVICE = "user/login";
@@ -45,6 +45,8 @@ public class UrlConstant {
 
     public static final String APP_BACK_END_DEVICE_SAVE_DEVICE_LOCATION= "device/saveDeivceLocation";
 
+    public static final String APP_BACK_END_USER_SendMessageToMPAll= "user/sendMessageToMPAll";
+
 
     public static String getAppBackEndServiceURL(String  service) {
         String serviceURL = String.format("http://%s:%s/%s", APP_BACK_END_IP, APP_BACK_END_PORT, service);
@@ -54,7 +56,8 @@ public class UrlConstant {
     /**
      * 本体库平台url
      */
-    public static final String ONTOLOGY_IP = "47.100.23.182";//142
+//    public static final String ONTOLOGY_IP = "47.100.23.182";//142
+    public static final String ONTOLOGY_IP = "119.29.194.211";//142
     public static final String ONTOLOGY_PORT = "8004";
 
     //用户登录

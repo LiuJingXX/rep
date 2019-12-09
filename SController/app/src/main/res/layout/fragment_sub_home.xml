@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/sub_home_textview1"
-            android:src="@drawable/ic_navigate_next_black_24dp" />
+             android:src="@drawable/ic_navigate_next_black_24dp" />
 
         <ImageView
             android:id="@+id/ic_home_add_device"
@@ -36,7 +36,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="20dp"
-            android:src="@drawable/ic_add_black_24dp" />
+             android:src="@drawable/ic_add_black_24dp" />
     </RelativeLayout>
 
 

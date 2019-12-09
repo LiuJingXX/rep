@@ -28,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:tint="@color/darkgray"
-                android:src="@drawable/ic_playlist_add_check_24dp" />
+                 android:src="@drawable/ic_playlist_add_check_24dp" />
             <TextView
                 android:id="@+id/tv_task_mine_progress"
                 android:layout_width="match_parent"
@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:tint="@color/darkgray"
-                android:src="@drawable/ic_access_time_24dp" />
+                 android:src="@drawable/ic_access_time_24dp" />
             <TextView
                 android:id="@+id/tv_task_mine_time"
                 android:layout_width="match_parent"
