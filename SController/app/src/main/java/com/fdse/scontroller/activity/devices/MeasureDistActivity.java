@@ -119,7 +119,7 @@ public class MeasureDistActivity extends AutoLayoutActivity implements SensorEve
 
         if (count % 5 == 0){
             mInfomation.setText("请将十字对准设备在地面的投影");
-            mTgtLocation.setText("当前十字的坐标是：(" + map.get("x_location")+","+map.get("y_location")+")");
+//            mTgtLocation.setText("当前十字的坐标是：(" + map.get("x_location")+","+map.get("y_location")+")");
             //mTvAzimuth.setText("设备所在的方位:"+ String.format(Locale.CHINA, "%.2f", azimuth));
            // mTvAzimuth.setText("设备所在的方位:"+ azimuth);
            // mTvAngle.setText("镜头角度：" + String.format(Locale.CHINA, "%.2f", angle));

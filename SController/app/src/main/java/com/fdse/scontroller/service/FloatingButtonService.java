@@ -20,6 +20,7 @@ import android.widget.Button;
 import com.cpacm.FloatingMusicButton;
 import com.cpacm.FloatingMusicMenu;
 import com.fdse.scontroller.R;
+import com.fdse.scontroller.activity.devices.NewDeviceManageActivity;
 import com.fdse.scontroller.util.UtilsOfSDCard;
 
 /**
@@ -39,12 +40,14 @@ public class FloatingButtonService extends Service {
     private FloatingMusicButton voiceBtn;
     private FloatingMusicButton videoBtn;
     private FloatingMusicButton endBtn;
+    private Context mContext;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
         isStarted = true;
+        mContext=this;
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         layoutParams = new WindowManager.LayoutParams();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -136,7 +139,7 @@ public class FloatingButtonService extends Service {
                     long startTime = Long.parseLong(lastOperate[8]);
                     long currentTime = System.currentTimeMillis();
                     long time1 = currentTime - startTime;
-                    String data = lastOperate[0]+"&&" +lastOperate[1]+ "&&" + downTime + "&&" + eventTime + "&&" + 9 + "&&" + x + "&&" + y + "&&" + 0 + "&&" + startTime + "&&" + currentTime + "&&" + time1 + "\r\n";
+                    String data = lastOperate[0] + "&&" + lastOperate[1] + "&&" + downTime + "&&" + eventTime + "&&" + 9 + "&&" + x + "&&" + y + "&&" + 0 + "&&" + startTime + "&&" + currentTime + "&&" + time1 + "\r\n";
                     UtilsOfSDCard.saveInfo(data);
                 }
             });
@@ -158,7 +161,9 @@ public class FloatingButtonService extends Service {
                     menuBtn.removeButton(videoBtn);
                     menuBtn.addButton(pauseBtn);
                     menuBtn.addButton(endBtn);
-
+                    Intent news = new Intent(mContext, NewDeviceManageActivity.class);
+                    news.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Service跳转到Activity 要加这个标记
+                    mContext.startActivity(news);
                     long downTime = SystemClock.uptimeMillis();
                     long eventTime = SystemClock.uptimeMillis() + 100;
                     float x = 0.0f;
@@ -171,7 +176,7 @@ public class FloatingButtonService extends Service {
                     long startTime = Long.parseLong(lastOperate[8]);
                     long currentTime = System.currentTimeMillis();
                     long time1 = currentTime - startTime;
-                    String data = lastOperate[0]+"&&" +lastOperate[1]+ "&&" + 1 + "&&" + 2 + "&&" + 7 + "&&" + x + "&&" + y + "&&" + 0 + "&&" + startTime + "&&" + currentTime + "&&" + time1 + "\r\n";
+                    String data = lastOperate[0] + "&&" + lastOperate[1] + "&&" + 1 + "&&" + 2 + "&&" + 7 + "&&" + x + "&&" + y + "&&" + 0 + "&&" + startTime + "&&" + currentTime + "&&" + time1 + "\r\n";
                     UtilsOfSDCard.saveInfo(data);
                 }
             });

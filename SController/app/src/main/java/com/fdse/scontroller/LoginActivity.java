@@ -261,6 +261,19 @@ public class LoginActivity extends FragmentActivity {
 
     private void login() {
 
+        if("admin".equals(email)){
+            Toast.makeText(LoginActivity.this, email+password, Toast.LENGTH_SHORT).show();
+            editor.putInt("userId", 8);
+            editor.putString("email","admin");
+            editor.putString("password","admin");
+            editor.putString("userName", "admin");
+            editor.commit();
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         /*发送post登录请求*/
         final HashMap<String, String> postData = new HashMap<String, String>();
 
@@ -273,6 +286,8 @@ public class LoginActivity extends FragmentActivity {
 //            final String encryptedEmail = RSAUtils.encryptByPublicKey(email);
 //            final String encryptedPassword = RSAUtils.encryptByPublicKey(password);
 
+            //            管理员账号密码登陆
+//            showLoginFailed(email+password);
             postData.put("encryptedEmail", email);
             postData.put("encryptedPassword", password);
 
